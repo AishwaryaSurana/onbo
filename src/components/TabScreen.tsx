@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CreateResultModal } from '@/components/CreateResultModal';
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { ThemedText } from '@/components/ThemedText';
 import { Radii, Spacing, Type, UI } from '@/theme';
@@ -26,6 +27,7 @@ interface Props {
 export function TabScreen({ subtitle, chips, sections }: Props) {
   const [activeChip, setActiveChip] = useState(0);
   const [toast, setToast] = useState(true);
+  const [picked, setPicked] = useState<Src | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setToast(false), 4500);
@@ -59,9 +61,11 @@ export function TabScreen({ subtitle, chips, sections }: Props) {
         </View>
 
         {sections.map((s) => (
-          <Section key={s.title} section={s} />
+          <Section key={s.title} section={s} onPick={setPicked} />
         ))}
       </ScrollView>
+
+      <CreateResultModal image={picked} onClose={() => setPicked(null)} />
 
       {toast && (
         <Pressable style={styles.toast} onPress={() => setToast(false)}>
@@ -76,14 +80,14 @@ export function TabScreen({ subtitle, chips, sections }: Props) {
   );
 }
 
-function Section({ section }: { section: TabSection }) {
+function Section({ section, onPick }: { section: TabSection; onPick: (img: Src) => void }) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHead}>
         <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
         {section.countdown && <Countdown />}
         {section.cta && (
-          <Pressable style={styles.createBtn}>
+          <Pressable style={styles.createBtn} onPress={() => onPick(section.images[0])}>
             <Text style={styles.createTxt}>{section.cta}</Text>
           </Pressable>
         )}
@@ -95,7 +99,9 @@ function Section({ section }: { section: TabSection }) {
       )}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
         {section.images.map((img, i) => (
-          <SkeletonImage key={i} source={img} style={styles.tile} radius={Radii.md} fallbackLabel="" />
+          <Pressable key={i} onPress={() => onPick(img)}>
+            <SkeletonImage source={img} style={styles.tile} radius={Radii.md} fallbackLabel="" />
+          </Pressable>
         ))}
       </ScrollView>
     </View>
