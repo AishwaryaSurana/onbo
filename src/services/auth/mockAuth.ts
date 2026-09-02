@@ -14,6 +14,11 @@ class MockAuth implements AuthService {
     return { id: `mock-google-${Date.now()}`, displayName: 'Alex' };
   }
 
+  async signInWithFacebook(): Promise<AuthUser> {
+    await wait(600);
+    return { id: `mock-facebook-${Date.now()}`, displayName: 'Alex' };
+  }
+
   async signInWithEmailLink(email: string): Promise<AuthUser> {
     // Simulate: send link -> user taps it in their mail app -> deep link returns here.
     await wait(1400);

@@ -6,7 +6,7 @@
  * the user never has to leave the app to read a code.
  */
 
-export type AuthMethod = 'apple' | 'google' | 'email';
+export type AuthMethod = 'apple' | 'google' | 'facebook' | 'email';
 
 export interface AuthUser {
   id: string;
@@ -17,6 +17,7 @@ export interface AuthUser {
 export interface AuthService {
   signInWithApple(): Promise<AuthUser>;
   signInWithGoogle(): Promise<AuthUser>;
+  signInWithFacebook(): Promise<AuthUser>;
   /** Sends a magic link; resolves when the link is "followed" (mock auto-follows). */
   signInWithEmailLink(email: string): Promise<AuthUser>;
 }

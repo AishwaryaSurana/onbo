@@ -86,6 +86,37 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
 export const WELCOME_BEFORE = P[10];
 export const WELCOME_AFTER = P[10];
 
+/** Full-bleed background for the Sign-in screen. */
+export const SIGNIN_BG = P[13];
+
+/** Paywall top carousel cards. */
+export const PAYWALL_CARDS: { title: string; sub: string; image: ImgSource }[] = [
+  { title: 'Editing Tools', sub: '100+ AI tools', image: P[3] },
+  { title: 'Photoshoots', sub: '100+ studio styles', image: P[10] },
+  { title: 'Headshots', sub: '100+ studio setups', image: P[8] },
+];
+
+/** Avatar strip + reviews on the paywall. */
+export const PAYWALL_AVATARS: ImgSource[] = [P[2], P[7], P[11], P[15]];
+
+export const PAYWALL_REVIEWS: { name: string; title: string; body: string }[] = [
+  {
+    name: 'Julie',
+    title: 'Natural results',
+    body: "The pictures are really natural looking. I don't look redone or like a stranger — just a nice polished version of myself.",
+  },
+  {
+    name: 'Marcus',
+    title: 'Worth it',
+    body: 'Had a headshot ready for LinkedIn in ten minutes. Photographer quotes were 20x the price.',
+  },
+  {
+    name: 'Priya',
+    title: 'So many looks',
+    body: 'I kept generating packs for fun. The outfit and background variety is unreal.',
+  },
+];
+
 /** Dashboard category tiles, keyed by name. Ordering per goal lives in the dashboard. */
 export const DASHBOARD_TILES: Record<string, ImgSource[]> = {
   'Reels & TikToks': [P[8], P[9], P[10]],

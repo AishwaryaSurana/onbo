@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SkeletonImage } from '@/components/SkeletonImage';
+import { StreakModal } from '@/components/StreakModal';
 import { ThemedText } from '@/components/ThemedText';
 import { DASHBOARD_TILES } from '@/onboarding/manifest';
 import { Events, track } from '@/services/analytics/analytics';
@@ -104,48 +105,61 @@ function CategoryRow({
   );
 }
 
-/** ONE gamification element on first load; the next is staggered later in the session. */
+/** Delay after the dashboard mounts before the streak sheet slides up. */
+const STREAK_DELAY_MS = 1000;
+
+/** ONE gamification element on first load (the streak reward sheet); a small tip is
+ *  staggered later in the session. */
 function GamificationHost() {
   const seen = useSessionStore((s) => s.gamificationSeen);
   const markSeen = useSessionStore((s) => s.markGamificationSeen);
-  const [visible, setVisible] = useState<string | null>(null);
+  const [tip, setTip] = useState(false);
+  const [streakReady, setStreakReady] = useState(false);
   const scheduled = useRef(false);
 
+  const showStreak = !seen.includes('daily_streak');
+
   useEffect(() => {
-    if (!seen.includes('daily_credits')) {
-      setVisible('daily_credits');
-      return;
-    }
-    if (!seen.includes('streak') && !scheduled.current) {
-      scheduled.current = true;
-      const t = setTimeout(() => setVisible('streak'), 12000);
-      return () => clearTimeout(t);
-    }
-  }, [seen]);
+    if (!showStreak) return;
+    const t = setTimeout(() => setStreakReady(true), STREAK_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [showStreak]);
 
-  if (!visible) return null;
+  useEffect(() => {
+    if (showStreak || seen.includes('tip') || scheduled.current) return;
+    scheduled.current = true;
+    const t = setTimeout(() => setTip(true), 12000);
+    return () => clearTimeout(t);
+  }, [showStreak, seen]);
 
-  const copy =
-    visible === 'daily_credits'
-      ? { title: 'Welcome gift', body: '+16 credits to start your first pack', cta: 'Claim' }
-      : { title: '1-day streak', body: 'Come back tomorrow for +24 credits', cta: 'Nice' };
+  if (showStreak) {
+    if (!streakReady) return null;
+    return (
+      <StreakModal
+        onClose={() => markSeen('daily_streak')}
+        onClaim={() => markSeen('daily_streak')}
+      />
+    );
+  }
+
+  if (!tip) return null;
 
   return (
     <View style={styles.toastWrap} pointerEvents="box-none">
       <View style={styles.toast}>
         <View style={{ flex: 1 }}>
-          <ThemedText style={Type.bodyStrong}>{copy.title}</ThemedText>
+          <ThemedText style={Type.bodyStrong}>1-day streak</ThemedText>
           <ThemedText color="textSecondary" style={Type.caption}>
-            {copy.body}
+            Come back tomorrow for +24 credits
           </ThemedText>
         </View>
         <Pressable
           style={styles.toastBtn}
           onPress={() => {
-            markSeen(visible);
-            setVisible(null);
+            markSeen('tip');
+            setTip(false);
           }}>
-          <ThemedText style={styles.toastBtnText}>{copy.cta}</ThemedText>
+          <ThemedText style={styles.toastBtnText}>Nice</ThemedText>
         </Pressable>
       </View>
     </View>

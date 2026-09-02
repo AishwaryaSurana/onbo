@@ -1,39 +1,35 @@
 /**
- * Subscriptions (PLAN.md §1, §3.9). Target: RevenueCat. This pass is an OFFLINE STUB
- * that returns hardcoded offerings and grants an entitlement on "purchase".
- *
- * Paywall rules baked in here: annual + free trial is the default/highlighted plan,
- * real prices are visible, and there is a restore path.
+ * Subscriptions (PLAN.md §1). Target: RevenueCat. This pass is an OFFLINE STUB that
+ * returns hardcoded offerings and grants an entitlement on "purchase".
  */
 import type { Entitlement } from '@/store/sessionStore';
 
 export interface Plan {
   id: string;
   title: string;
+  /** Big price, e.g. "$5". */
   priceLabel: string;
-  /** Secondary line, e.g. per-month equivalent or credit count. */
+  /** Period suffix, e.g. "/week". */
+  pricePeriod: string;
+  /** Credits line under the title. */
   subLabel: string;
-  trialLabel?: string;
-  highlighted?: boolean;
   badge?: string;
+  highlighted?: boolean;
 }
 
 const PLANS: Plan[] = [
+  { id: 'yearly_lite', title: 'Yearly Lite', priceLabel: '$3', pricePeriod: '/week', subLabel: '300 monthly credits' },
   {
-    id: 'annual',
-    title: 'Yearly',
-    priceLabel: '$59.99 / year',
-    subLabel: '≈ $5.00 / month · 1,200 credits',
-    trialLabel: '7-day free trial, then $59.99/yr',
+    id: 'yearly_pro',
+    title: 'Yearly Pro',
+    priceLabel: '$5',
+    pricePeriod: '/week',
+    subLabel: '1,200 monthly credits',
+    badge: '25% DISCOUNT',
     highlighted: true,
-    badge: 'BEST VALUE · 58% OFF',
   },
-  {
-    id: 'monthly',
-    title: 'Monthly',
-    priceLabel: '$11.99 / month',
-    subLabel: '300 credits / month',
-  },
+  { id: 'weekly_lite', title: 'Weekly Lite', priceLabel: '$8', pricePeriod: '/week', subLabel: '200 weekly credits' },
+  { id: 'weekly_pro', title: 'Weekly Pro', priceLabel: '$12', pricePeriod: '/week', subLabel: '400 weekly credits' },
 ];
 
 export interface BillingService {
@@ -54,8 +50,7 @@ class StubBilling implements BillingService {
   }
   async purchase(planId: string) {
     await wait(900);
-    // Annual carries a trial in this stub; monthly bills immediately.
-    return { entitlement: planId === 'annual' ? ('trial' as const) : ('paid' as const) };
+    return { entitlement: planId.startsWith('yearly') ? ('trial' as const) : ('paid' as const) };
   }
   async restore() {
     await wait(700);
