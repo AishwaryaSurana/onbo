@@ -131,3 +131,24 @@ export const DASHBOARD_TILES: Record<string, ImgSource[]> = {
   'Background Enhancer': [P[0], P[5], P[9], P[1], P[6]],
   'Creative Styles': [P[14], P[1], P[8], P[10], P[7]],
 };
+
+/** AI Photos tab content. */
+export const AI_PHOTO_CHIPS = ['All', 'New Packs', 'AI Headshots', 'Classy & Formal', 'Outdoor'];
+export const AI_PHOTO_SECTIONS: {
+  title: string;
+  images: ImgSource[];
+  cta?: string;
+  countdown?: boolean;
+}[] = [
+  { title: 'New Packs', countdown: true, images: [P[7], P[12], P[15], P[10], P[3]] },
+  { title: 'Professional Headshots', cta: 'Create pack', images: [P[2], P[8], P[11], P[7], P[10]] },
+  { title: 'Healthcare Headshots', cta: 'Create pack', images: [P[13], P[2], P[11], P[8], P[7]] },
+];
+
+/** AI Editor tab content. */
+export const AI_EDITOR_CHIPS = ['All', 'Creative & Artsy Filters', 'Face & Body Edits', 'Restore'];
+export const AI_EDITOR_SECTIONS: { title: string; images: ImgSource[] }[] = [
+  { title: '1990s Camera Filter', images: [P[9], P[10], P[13], P[3], P[12]] },
+  { title: 'Decade Portrait Generator', images: [P[1], P[6], P[0], P[5], P[8]] },
+  { title: 'Vintage Polaroid Filter', images: [P[4], P[14], P[15], P[13], P[2]] },
+];

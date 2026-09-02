@@ -1,23 +1,16 @@
-import { StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { TabPaywallGate } from '@/components/TabPaywallGate';
-import { ThemedText } from '@/components/ThemedText';
-import { Spacing, Type, UI } from '@/theme';
+import { TabScreen } from '@/components/TabScreen';
+import { AI_PHOTO_CHIPS, AI_PHOTO_SECTIONS } from '@/onboarding/manifest';
 
 export default function AIPhotos() {
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.center}>
-        <ThemedText style={Type.subtitle}>AI Photos</ThemedText>
-        <ThemedText color="textMuted" style={Type.caption}>Generate a pack from your selfies</ThemedText>
-      </View>
+    <>
+      <TabScreen
+        subtitle="Create stunning AI photos in seconds."
+        chips={AI_PHOTO_CHIPS}
+        sections={AI_PHOTO_SECTIONS}
+      />
       <TabPaywallGate />
-    </SafeAreaView>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: UI.bg },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
-});

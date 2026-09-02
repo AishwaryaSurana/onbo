@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Modal } from 'react-native';
 
@@ -10,7 +10,7 @@ import { useSessionStore } from '@/store/sessionStore';
 /**
  * Drop into a tab screen to gate it behind the paywall for non-subscribers.
  * Shows the PaywallSheet (in a top-level Modal) every time the tab gains focus while
- * there's no entitlement; closing returns to the Dashboard tab.
+ * there's no entitlement; dismissing just reveals the tab's browse screen behind it.
  */
 export function TabPaywallGate() {
   const entitlement = useSessionStore((s) => s.entitlement);
@@ -28,10 +28,7 @@ export function TabPaywallGate() {
     }, [entitlement]),
   );
 
-  const close = () => {
-    setOpen(false);
-    router.navigate('/(app)/dashboard');
-  };
+  const close = () => setOpen(false);
 
   const subscribe = async (planId: string) => {
     setBusy(true);
