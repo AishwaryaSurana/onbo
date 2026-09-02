@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -7,13 +7,15 @@ import { Radii, Spacing } from '@/theme';
 
 const DAYS = [16, 16, 16, 16, 16, 24, 32];
 
-/** Aragon-style daily reward sheet shown on the dashboard. */
+/** Aragon-style daily reward sheet. Rendered in a top-level Modal so it sits ABOVE the
+ *  bottom tab bar and status bar. */
 export function StreakModal({ onClose, onClaim }: { onClose: () => void; onClaim: () => void }) {
   return (
-    <Animated.View entering={FadeIn.duration(180)} style={styles.overlay}>
-      <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+    <Modal transparent visible statusBarTranslucent animationType="none" onRequestClose={onClose}>
+      <Animated.View entering={FadeIn.duration(180)} style={styles.overlay}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-      <Animated.View entering={SlideInDown.duration(280)} style={styles.sheet}>
+        <Animated.View entering={SlideInDown.duration(280)} style={styles.sheet}>
         <LinearGradient
           colors={['#F5620E', '#8A3E15', '#17171C']}
           locations={[0, 0.32, 1]}
@@ -54,18 +56,15 @@ export function StreakModal({ onClose, onClaim }: { onClose: () => void; onClaim
         </View>
 
         <PrimaryButton label="Claim" onPress={onClaim} style={styles.claim} />
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',
     justifyContent: 'flex-end',
   },
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: Radii.xl,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.lg,
-    paddingBottom: Spacing.xl,
+    paddingBottom: 40,
     alignItems: 'center',
     gap: Spacing.sm,
   },
