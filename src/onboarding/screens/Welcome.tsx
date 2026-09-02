@@ -1,73 +1,90 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
+import { CollageMarquee } from '@/components/CollageMarquee';
+import { Laurels } from '@/components/Laurels';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { ThemedText } from '@/components/ThemedText';
 import { useSequencer } from '@/onboarding/SequencerContext';
-import { StepScaffold } from '@/onboarding/StepScaffold';
-import { WELCOME_AFTER, WELCOME_BEFORE } from '@/onboarding/manifest';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing } from '@/theme';
 
-const RATING = '4.8';
-const USERS = '2,683,000';
+// This screen intentionally matches the video's LIGHT welcome screen.
+const LIGHT = {
+  bg: '#FFFFFF',
+  text: '#0B0B0F',
+  secondary: '#5B5B66',
+  muted: '#8A8A94',
+};
 
-/** PLAN.md 3.1 — auto-playing before/after, social proof, ONE CTA (no competing buttons). */
+/** PLAN.md 3.1 — sliding collage of AI photos, laurel social proof, ONE CTA. */
 export function Welcome() {
   const { next } = useSequencer();
+  const insets = useSafeAreaInsets();
 
   return (
-    <StepScaffold
-      hideHeader
-      scroll={false}
-      footer={
+    <View style={[styles.root, { backgroundColor: LIGHT.bg }]}>
+      <CollageMarquee fadeColor={LIGHT.bg} style={styles.collage} />
+
+      <View style={[styles.card, { paddingBottom: insets.bottom + Spacing.md }]}>
+        <View style={styles.stats}>
+          <View style={styles.statCol}>
+            <Text style={[styles.statLabel, { color: LIGHT.secondary }]}>Average rating</Text>
+            <Laurels size={38}>
+              <Text style={[styles.statValue, { color: LIGHT.text }]}>4.8</Text>
+              <Text style={styles.stars}>★★★★★</Text>
+            </Laurels>
+          </View>
+
+          <View style={styles.statCol}>
+            <Text style={[styles.statLabel, { color: LIGHT.secondary }]}>Trusted by over</Text>
+            <Laurels size={38}>
+              <Text
+                style={[styles.statValue, styles.statValueNum, { color: LIGHT.text }]}
+                numberOfLines={1}>
+                2,683,000
+              </Text>
+              <Text style={[styles.statSub, { color: LIGHT.muted }]}>professionals</Text>
+            </Laurels>
+          </View>
+        </View>
+
+        <Text style={[styles.title, { color: LIGHT.text }]}>Welcome to Aragon</Text>
+        <Text style={[styles.subtitle, { color: LIGHT.secondary }]}>
+          Stunning photos, videos, edits,{'\n'}and perfect headshots.
+        </Text>
+
         <PrimaryButton
           label="Continue"
           onPress={next}
+          style={styles.cta}
           accessibilityHint="Start setting up your AI photos"
         />
-      }>
-      <View style={styles.hero}>
-        <BeforeAfterSlider before={WELCOME_BEFORE} after={WELCOME_AFTER} height={420} autoPlay />
       </View>
-
-      <View style={styles.proofRow}>
-        <View style={styles.proofItem}>
-          <ThemedText style={Type.title}>{RATING}★</ThemedText>
-          <ThemedText color="textSecondary" style={Type.caption}>
-            Average rating
-          </ThemedText>
-        </View>
-        <View style={styles.divider} />
-        <View style={styles.proofItem}>
-          <ThemedText style={Type.title}>{USERS}</ThemedText>
-          <ThemedText color="textSecondary" style={Type.caption}>
-            Photos created for people
-          </ThemedText>
-        </View>
-      </View>
-
-      <View style={styles.copy}>
-        <ThemedText style={Type.hero}>Studio-quality photos of you</ThemedText>
-        <ThemedText color="textSecondary" style={Type.body}>
-          Upload a few selfies. Get professional headshots and more in minutes.
-        </ThemedText>
-      </View>
-    </StepScaffold>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { paddingTop: Spacing.sm },
-  proofRow: {
-    flexDirection: 'row',
+  root: { flex: 1 },
+  collage: { flex: 1 },
+  card: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.sm,
+    gap: Spacing.md,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.lg,
-    backgroundColor: Brand.surface,
-    borderRadius: Radii.lg,
-    paddingVertical: Spacing.md,
   },
-  proofItem: { alignItems: 'center', gap: 2, flex: 1 },
-  divider: { width: StyleSheet.hairlineWidth, height: 36, backgroundColor: Brand.border },
-  copy: { gap: Spacing.sm, marginTop: 'auto' },
+  stats: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap: Spacing.md,
+  },
+  statCol: { alignItems: 'center', gap: 3, flexShrink: 1 },
+  statLabel: { fontSize: 12, fontWeight: '500' },
+  statValue: { fontSize: 20, fontWeight: '800', letterSpacing: -0.3 },
+  statValueNum: { fontSize: 17 },
+  stars: { fontSize: 10, color: '#F5A623', letterSpacing: 1 },
+  statSub: { fontSize: 11, fontWeight: '500' },
+  title: { fontSize: 30, fontWeight: '800', letterSpacing: -0.5, textAlign: 'center' },
+  subtitle: { fontSize: 16, lineHeight: 22, textAlign: 'center' },
+  cta: { alignSelf: 'stretch', borderRadius: Radii.pill, marginTop: Spacing.xs },
 });

@@ -94,6 +94,57 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
 export const WELCOME_BEFORE = P[4];
 export const WELCOME_AFTER = P[9];
 
+/** All photos for the sliding Welcome collage (order = visual mix, not sequential). */
+export const COLLAGE_IMAGES: ImgSource[] = [
+  P[8], P[0], P[12], P[3], P[9], P[5], P[14], P[1],
+  P[10], P[6], P[15], P[2], P[11], P[7], P[13], P[4],
+];
+
+/** Feature-teaser screens, mirroring the video's carousel. Images come from the
+ *  user's goal set; headline + swatches are fixed per the video. */
+export interface Teaser {
+  headline: string;
+  swatches: string[];
+}
+
+export const TEASERS: Teaser[] = [
+  {
+    headline: 'Adjust your lip color, eye makeup look, etc',
+    swatches: ['#E8622C', '#B32B3A', '#E39AA3', '#D64D8B', '#5E1F2E', '#CDB4A6'],
+  },
+  {
+    headline: 'Find the perfect outfit for your photo',
+    swatches: ['#2E3A87', '#3B7D4F', '#C9803B', '#2B2B2B', '#7A5C3E', '#8894A0'],
+  },
+  {
+    headline: 'Visualize yourself in different backgrounds',
+    swatches: ['#6C4BB6', '#2E7DA3', '#C24D3E', '#3E8E5A', '#D8A93B', '#222222'],
+  },
+  {
+    headline: 'Generate fun, retro-style images',
+    swatches: ['#E0B23B', '#C7532E', '#3E6E8E', '#7FA05A', '#B4472F', '#222222'],
+  },
+];
+
+/**
+ * Teaser visuals, matching the video screen-for-screen:
+ *  - idx 0 "lip colour"  → same portrait both sides, AFTER tinted by the chosen swatch
+ *  - idx 1 "outfit"      → BEFORE = base, AFTER + thumbnails = outfit variants
+ *  - idx 2 "backgrounds" → BEFORE = base, AFTER + thumbnails = background variants
+ *  - idx 3 "art styles"  → BEFORE = base, AFTER + thumbnails = art-style variants
+ *
+ * TODO: swap these for real same-identity render sets (drop into assets/onboarding/,
+ * update the indices) for pixel-parity with the video.
+ */
+export const TEASER_BASE: ImgSource[] = [P[0], P[0], P[1], P[3]];
+
+export const TEASER_VARIANTS: ImgSource[][] = [
+  [], // idx 0 uses swatches, not image variants
+  [P[4], P[5], P[6], P[7], P[8]],
+  [P[9], P[10], P[11], P[12], P[13]],
+  [P[14], P[15], P[0], P[2], P[6]],
+];
+
 /** Dashboard category tiles (PLAN.md 3.10). */
 export const DASHBOARD_TILES: Record<string, ImgSource[]> = {
   'Professional Headshots': [P[8], P[9], P[10]],
