@@ -7,16 +7,16 @@ import { useSequencer } from '@/onboarding/SequencerContext';
 import { StepScaffold } from '@/onboarding/StepScaffold';
 import { Events, track } from '@/services/analytics/analytics';
 import { useOnboardingStore, type Goal } from '@/store/onboardingStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 const OPTIONS: { id: Goal; label: string; blurb: string; emoji: string }[] = [
-  { id: 'headshots', label: 'Professional headshots', blurb: 'LinkedIn, resumes, team pages', emoji: '💼' },
-  { id: 'dating', label: 'Dating photos', blurb: 'Stand out, look like you', emoji: '💛' },
-  { id: 'creative', label: 'Creative styles', blurb: 'Film, retro, painterly, neon', emoji: '🎨' },
+  { id: 'reels', label: 'Reels & TikToks', blurb: 'Scroll-stopping short video', emoji: '🎬' },
+  { id: 'portraits', label: 'Portraits & Selfies', blurb: 'Studio-quality photos of you', emoji: '📸' },
+  { id: 'thumbnails', label: 'YouTube thumbnails', blurb: 'Higher click-through, on brand', emoji: '▶️' },
   { id: 'exploring', label: 'Just exploring', blurb: 'Show me what it can do', emoji: '✨' },
 ];
 
-/** PLAN.md 3.2 — single-select, 4 options max, tappable cards (not a dropdown), Skip always visible. */
+/** Step 2 — one tappable screen. Feels like progress; tailors later content + recs. */
 export function Personalization() {
   const { next } = useSequencer();
   const storedGoal = useOnboardingStore((s) => s.goal);
@@ -36,13 +36,13 @@ export function Personalization() {
           label="Continue"
           onPress={next}
           disabled={!selected}
-          accessibilityHint="Use your goal to tailor styles"
+          accessibilityHint="Tailor the app to your goal"
         />
       }>
       <View style={styles.copy}>
         <ThemedText style={Type.hero}>What do you want to create?</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          We&apos;ll tune your styles and examples around this. You can change it later.
+          Takes 3 seconds. We&apos;ll tune your examples and templates around it.
         </ThemedText>
       </View>
 
@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     padding: Spacing.lg,
     borderRadius: Radii.lg,
-    backgroundColor: Brand.surface,
+    backgroundColor: UI.surface,
     borderWidth: 1.5,
-    borderColor: Brand.border,
+    borderColor: UI.border,
   },
-  cardActive: { borderColor: Brand.accent, backgroundColor: Brand.accentSoft },
+  cardActive: { borderColor: UI.accent, backgroundColor: UI.accentSoft },
   emoji: { fontSize: 24 },
   cardText: { flex: 1, gap: 2 },
   radio: {
@@ -95,10 +95,10 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: Radii.pill,
     borderWidth: 2,
-    borderColor: Brand.textMuted,
+    borderColor: UI.textMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  radioActive: { borderColor: Brand.accent },
-  radioDot: { width: 10, height: 10, borderRadius: Radii.pill, backgroundColor: Brand.accent },
+  radioActive: { borderColor: UI.accent },
+  radioDot: { width: 10, height: 10, borderRadius: Radii.pill, backgroundColor: UI.accent },
 });

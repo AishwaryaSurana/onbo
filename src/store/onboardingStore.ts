@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-export type Goal = 'headshots' | 'dating' | 'creative' | 'exploring';
+export type Goal = 'reels' | 'portraits' | 'thumbnails' | 'exploring';
 
 interface OnboardingState {
   _hasHydrated: boolean;
@@ -56,10 +56,17 @@ export const useOnboardingStore = create<OnboardingState>()(
     }),
     {
       name: 'onboarding-store',
+      version: 2,
       storage: createJSONStorage(() => AsyncStorage),
       // Persist the collected data, NOT the cursor: a cold start always resumes at step 0
       // (avoids reopening on "Generating"/paywall, and keeps demo runs predictable).
       partialize: ({ _hasHydrated, stepIndex, ...rest }) => rest,
+      migrate: (persisted) => {
+        const valid = ['reels', 'portraits', 'thumbnails', 'exploring'];
+        const p = (persisted ?? {}) as Record<string, unknown>;
+        if (typeof p.goal !== 'string' || !valid.includes(p.goal)) p.goal = null;
+        return p as never;
+      },
     },
   ),
 );

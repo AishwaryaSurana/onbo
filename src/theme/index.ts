@@ -64,16 +64,40 @@ export const Type = {
   button: { fontSize: 17, lineHeight: 22, fontWeight: '700' as const },
 } as const;
 
-/** Fixed dark navigation theme so react-navigation containers never flash white. */
+/**
+ * Light UI palette — the theme the Aragon video uses for the onboarding funnel
+ * (white surfaces, near-black text, orange accent). Onboarding screens use this.
+ */
+export const UI = {
+  bg: '#FFFFFF',
+  surface: '#F5F5F7',
+  surfaceElevated: '#FFFFFF',
+  surfaceSelected: '#FDEEE4',
+  border: '#E5E5EA',
+  text: '#0B0B0F',
+  textSecondary: '#5B5B66',
+  textMuted: '#8A8A94',
+  textOnAccent: '#FFFFFF',
+  accent: '#F5620E',
+  accentPressed: '#D8530A',
+  accentSoft: 'rgba(245,98,14,0.10)',
+  success: '#1FA971',
+  danger: '#E0413E',
+  overlay: 'rgba(0,0,0,0.55)',
+  skeletonBase: '#ECECEF',
+  skeletonHighlight: '#DCDCE1',
+} as const;
+
+/** Light navigation theme matching the onboarding UI. */
 export const navTheme = {
-  dark: true,
+  dark: false,
   colors: {
-    primary: Brand.accent,
-    background: Brand.bg,
-    card: Brand.bg,
-    text: Brand.text,
-    border: Brand.border,
-    notification: Brand.accent,
+    primary: UI.accent,
+    background: UI.bg,
+    card: UI.bg,
+    text: UI.text,
+    border: UI.border,
+    notification: UI.accent,
   },
   fonts: {
     regular: { fontFamily: 'System', fontWeight: '400' as const },

@@ -6,7 +6,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Brand, Radii } from '@/theme';
+import { UI, Radii } from '@/theme';
 
 /** Overall onboarding progress. `value` in [0, 1]. */
 export function ProgressBar({ value }: { value: number }) {
@@ -30,12 +30,12 @@ const styles = StyleSheet.create({
   track: {
     height: 4,
     borderRadius: Radii.pill,
-    backgroundColor: Brand.border,
+    backgroundColor: UI.border,
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
     borderRadius: Radii.pill,
-    backgroundColor: Brand.accent,
+    backgroundColor: UI.accent,
   },
 });

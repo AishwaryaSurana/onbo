@@ -1,5 +1,4 @@
-import { useCameraPermissions } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import * as Notifications from 'expo-notifications';
 import { StyleSheet, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -10,40 +9,41 @@ import { Events, track } from '@/services/analytics/analytics';
 import { Radii, Spacing, Type, UI } from '@/theme';
 
 const POINTS = [
-  { icon: '🎨', text: 'We apply the look to a photo you choose.' },
-  { icon: '📴', text: 'Nothing is uploaded without your say-so.' },
-  { icon: '🗑️', text: 'Delete your photos and results any time.' },
+  { icon: '📤', text: 'Know the moment your export is ready.' },
+  { icon: '🎁', text: 'First dibs on new templates and free credits.' },
+  { icon: '🔕', text: 'No spam — turn it off any time in Settings.' },
 ];
 
-/** Step 3 — primed permission. Explain WHY before the OS dialog fires. */
-export function PermissionPrimer() {
-  const { next } = useSequencer();
-  const [, requestCamera] = useCameraPermissions();
-  const [, requestLibrary] = ImagePicker.useMediaLibraryPermissions();
+/** Step 7 — soft close. Paywall was declined; the user still lands in the app (limited).
+ *  Ask for push here, framed around value — not on launch. */
+export function NotifPriming() {
+  const { goToDashboard } = useSequencer();
 
-  const handleAllow = async () => {
-    const cam = await requestCamera();
-    const lib = await requestLibrary();
-    const granted = cam?.granted || lib?.granted;
-    track(granted ? Events.permissionGranted : Events.permissionDenied, {
-      camera: !!cam?.granted,
-      library: !!lib?.granted,
-    });
-    next();
+  const allow = async () => {
+    try {
+      const res = await Notifications.requestPermissionsAsync();
+      track(res.granted ? Events.permissionGranted : Events.permissionDenied, { kind: 'push' });
+    } catch {
+      track(Events.permissionDenied, { kind: 'push' });
+    }
+    goToDashboard();
   };
 
   return (
     <StepScaffold
+      hideHeader
       footer={
         <View style={{ gap: Spacing.sm }}>
-          <PrimaryButton label="Allow photo access" onPress={handleAllow} />
-          <PrimaryButton label="Not now" variant="ghost" onPress={next} />
+          <PrimaryButton label="Turn on notifications" onPress={allow} />
+          <PrimaryButton label="Not now" variant="ghost" onPress={goToDashboard} />
         </View>
       }>
       <View style={styles.copy}>
-        <ThemedText style={Type.hero}>We&apos;ll need access to your photos</ThemedText>
+        <ThemedText style={styles.emoji}>🔔</ThemedText>
+        <ThemedText style={Type.hero}>Get notified when your export is ready</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          …to apply this look to one of them. Nothing is uploaded without your say-so.
+          You&apos;re in — on the free plan for now (watermark, fewer templates). We&apos;ll ping you
+          when renders finish so you don&apos;t have to wait around.
         </ThemedText>
       </View>
 
@@ -61,6 +61,7 @@ export function PermissionPrimer() {
 
 const styles = StyleSheet.create({
   copy: { gap: Spacing.sm, marginTop: Spacing.sm },
+  emoji: { fontSize: 44 },
   list: { gap: Spacing.md, marginTop: Spacing.lg },
   row: {
     flexDirection: 'row',

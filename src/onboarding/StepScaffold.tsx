@@ -13,7 +13,7 @@ import { ProgressBar } from '@/components/ProgressBar';
 import { SkipButton } from '@/components/SkipButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useSequencer } from '@/onboarding/SequencerContext';
-import { Brand, Spacing } from '@/theme';
+import { UI, Spacing } from '@/theme';
 
 interface Props {
   children: ReactNode;
@@ -89,7 +89,7 @@ export function StepScaffold({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Brand.bg },
+  safe: { flex: 1, backgroundColor: UI.bg },
   flex: { flex: 1 },
   header: {
     flexDirection: 'row',
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
     gap: Spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Brand.border,
-    backgroundColor: Brand.bg,
+    borderTopColor: UI.border,
+    backgroundColor: UI.bg,
   },
 });

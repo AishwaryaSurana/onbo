@@ -5,25 +5,33 @@ import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useSequencer } from '@/onboarding/SequencerContext';
-import { photoImageSource, resultImageSource } from '@/onboarding/manifest';
+import { photoImageSource, resultImageSource, STYLE_SETS } from '@/onboarding/manifest';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
-/** PLAN.md 3.7 — the aha moment. Full-bleed before/after of the user's OWN photo,
- *  shown BEFORE any signup or paywall. */
+/** Step 4 (payoff) — the aha moment. Before/after of the user's OWN photo, shown BEFORE
+ *  any signup or paywall. */
 export function ResultReveal() {
   const { next, jumpTo } = useSequencer();
   const goal = useOnboardingStore((s) => s.goal) ?? 'exploring';
   const resultStyleId = useOnboardingStore((s) => s.resultStyleId);
+  const setChosenStyle = useOnboardingStore((s) => s.setChosenStyle);
   const photoUri = useOnboardingStore((s) => s.photoUri);
   const photoSource = useOnboardingStore((s) => s.photoSource);
+
+  const tryAnother = () => {
+    const set = STYLE_SETS[goal];
+    const i = set.findIndex((s) => s.id === resultStyleId);
+    setChosenStyle(set[(i + 1) % set.length].id);
+    jumpTo('generating');
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <View style={styles.head}>
-        <ThemedText style={Type.title}>Here&apos;s your preview</ThemedText>
+        <ThemedText style={Type.title}>Whoa — that&apos;s you</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          Drag to compare. This is a low-res sample — your pack renders in full quality.
+          Drag to compare. Preview is low-res; your full render is crisp and watermark-free.
         </ThemedText>
       </View>
 
@@ -33,6 +41,7 @@ export function ResultReveal() {
           after={resultImageSource(goal, resultStyleId)}
           height={460}
           radius={Radii.xl}
+          autoPlay
         />
       </View>
 
@@ -40,20 +49,16 @@ export function ResultReveal() {
         <PrimaryButton
           label="Save this look"
           onPress={next}
-          accessibilityHint="Create your account to keep this result"
+          accessibilityHint="Create an account to keep this result"
         />
-        <PrimaryButton
-          label="Try another style"
-          variant="ghost"
-          onPress={() => jumpTo('styleTeaser')}
-        />
+        <PrimaryButton label="Try a different look" variant="ghost" onPress={tryAnother} />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Brand.bg, paddingHorizontal: Spacing.lg },
+  safe: { flex: 1, backgroundColor: UI.bg, paddingHorizontal: Spacing.lg },
   head: { gap: Spacing.sm, paddingTop: Spacing.sm },
   stage: { flex: 1, justifyContent: 'center', paddingVertical: Spacing.lg },
   footer: { gap: Spacing.sm, paddingBottom: Spacing.sm },

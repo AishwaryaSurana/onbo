@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
-import { Brand, Spacing, Type } from '@/theme';
+import { Spacing, Type, UI } from '@/theme';
 
 export default function Stub() {
   return (
@@ -16,6 +16,6 @@ export default function Stub() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Brand.bg },
+  safe: { flex: 1, backgroundColor: UI.bg },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
 });

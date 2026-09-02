@@ -1,7 +1,6 @@
-import { ActivityIndicator, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 interface Props {
   label: string;
@@ -24,6 +23,7 @@ export function PrimaryButton({
 }: Props) {
   const isPrimary = variant === 'primary';
   const isSecondary = variant === 'secondary';
+  const labelColor = isPrimary ? UI.textOnAccent : isSecondary ? UI.text : UI.textSecondary;
 
   return (
     <Pressable
@@ -42,12 +42,8 @@ export function PrimaryButton({
         style,
       ]}>
       <View style={styles.inner}>
-        {loading && <ActivityIndicator color={isPrimary ? Brand.textOnAccent : Brand.text} />}
-        <ThemedText
-          color={isPrimary ? 'text' : isSecondary ? 'text' : 'textSecondary'}
-          style={Type.button}>
-          {label}
-        </ThemedText>
+        {loading && <ActivityIndicator color={labelColor} />}
+        <Text style={[Type.button, { color: labelColor }]}>{label}</Text>
       </View>
     </Pressable>
   );
@@ -62,7 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
   inner: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  primary: { backgroundColor: Brand.accent },
-  secondary: { backgroundColor: Brand.surfaceElevated, borderWidth: 1, borderColor: Brand.border },
+  primary: { backgroundColor: UI.accent },
+  secondary: { backgroundColor: UI.surfaceElevated, borderWidth: 1.5, borderColor: UI.border },
   ghost: { backgroundColor: 'transparent' },
 });

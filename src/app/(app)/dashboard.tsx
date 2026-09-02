@@ -6,30 +6,31 @@ import { SkeletonImage } from '@/components/SkeletonImage';
 import { ThemedText } from '@/components/ThemedText';
 import { DASHBOARD_TILES } from '@/onboarding/manifest';
 import { Events, track } from '@/services/analytics/analytics';
-import { safeDisplayName, useSessionStore } from '@/store/sessionStore';
 import { useOnboardingStore, type Goal } from '@/store/onboardingStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { safeDisplayName, useSessionStore } from '@/store/sessionStore';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 const ALL_CATEGORIES = Object.keys(DASHBOARD_TILES);
 
 const ORDER_BY_GOAL: Record<Goal, string[]> = {
-  headshots: ['Professional Headshots', 'Background Enhancer', 'Dating Photos', 'Creative Styles'],
-  dating: ['Dating Photos', 'Professional Headshots', 'Creative Styles', 'Background Enhancer'],
-  creative: ['Creative Styles', 'Dating Photos', 'Professional Headshots', 'Background Enhancer'],
+  reels: ['Reels & TikToks', 'Trending Templates', 'Portraits & Selfies', 'YouTube Thumbnails'],
+  portraits: ['Portraits & Selfies', 'Trending Templates', 'Reels & TikToks', 'YouTube Thumbnails'],
+  thumbnails: ['YouTube Thumbnails', 'Trending Templates', 'Reels & TikToks', 'Portraits & Selfies'],
   exploring: ALL_CATEGORIES,
 };
 
-/** PLAN.md 3.10 / 4.5 / 4.7 — goal-filtered rows, display-name greeting,
- *  exactly ONE gamification element on first load. */
+/** Home. Goal-filtered rows, display-name greeting, ONE gamification element on first load.
+ *  Reflects the limited free experience when there's no entitlement (soft-close path). */
 export default function Dashboard() {
   const displayName = useSessionStore((s) => s.displayName);
   const entitlement = useSessionStore((s) => s.entitlement);
   const goal = useOnboardingStore((s) => s.goal);
 
   const categories = useMemo(
-    () => (goal ? ORDER_BY_GOAL[goal] : ALL_CATEGORIES),
+    () => (goal && ORDER_BY_GOAL[goal] ? ORDER_BY_GOAL[goal] : ALL_CATEGORIES),
     [goal],
   );
+  const isFree = entitlement === 'none';
 
   useEffect(() => {
     track(Events.dashboardReached, { entitlement, goal: goal ?? 'unset' });
@@ -40,26 +41,33 @@ export default function Dashboard() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <View style={styles.pill}>
-            <ThemedText style={styles.pillText}>
-              🔥 {entitlement === 'none' ? '16' : entitlement === 'trial' ? '1,200' : '1,200'} credits
-            </ThemedText>
+            <ThemedText style={styles.pillText}>🔥 {isFree ? '16' : '1,200'} credits</ThemedText>
           </View>
-          {entitlement === 'none' && (
+          {isFree && (
             <View style={[styles.pill, styles.pillAccent]}>
-              <ThemedText style={styles.pillText}>Upgrade</ThemedText>
+              <ThemedText style={[styles.pillText, { color: '#FFF' }]}>Upgrade</ThemedText>
             </View>
           )}
         </View>
 
         <ThemedText style={Type.hero}>Hi {safeDisplayName(displayName)} 👋</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          {entitlement === 'none'
-            ? 'Free preview mode — your first pack is one tap away.'
-            : `You're on the ${entitlement} plan. Pick a pack to generate.`}
+          {isFree
+            ? 'Free plan — exports carry a watermark and templates are limited.'
+            : `You're on the ${entitlement} plan. Every template, no watermark.`}
         </ThemedText>
 
+        {isFree && (
+          <View style={styles.banner}>
+            <ThemedText style={Type.bodyStrong}>Remove watermark + unlock 200 templates</ThemedText>
+            <ThemedText color="textSecondary" style={Type.caption}>
+              Start your 7-day free trial any time.
+            </ThemedText>
+          </View>
+        )}
+
         {categories.map((cat) => (
-          <CategoryRow key={cat} title={cat} tiles={DASHBOARD_TILES[cat]} />
+          <CategoryRow key={cat} title={cat} tiles={DASHBOARD_TILES[cat]} locked={isFree} />
         ))}
       </ScrollView>
 
@@ -68,26 +76,35 @@ export default function Dashboard() {
   );
 }
 
-function CategoryRow({ title, tiles }: { title: string; tiles: { uri: string }[] | number[] }) {
+function CategoryRow({
+  title,
+  tiles,
+  locked,
+}: {
+  title: string;
+  tiles: (number | { uri: string })[];
+  locked?: boolean;
+}) {
   return (
     <View style={styles.row}>
       <ThemedText style={Type.subtitle}>{title}</ThemedText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
-        {(tiles as unknown[]).map((t, i) => (
-          <SkeletonImage
-            key={i}
-            source={t as never}
-            style={styles.tile}
-            radius={Radii.lg}
-            fallbackLabel=""
-          />
+        {tiles.map((t, i) => (
+          <View key={i}>
+            <SkeletonImage source={t} style={styles.tile} radius={Radii.lg} fallbackLabel="" />
+            {locked && i > 0 && (
+              <View style={styles.lock}>
+                <ThemedText style={{ fontSize: 14 }}>🔒</ThemedText>
+              </View>
+            )}
+          </View>
         ))}
       </ScrollView>
     </View>
   );
 }
 
-/** Shows ONE gamification element on first load; schedules the next for later in the session. */
+/** ONE gamification element on first load; the next is staggered later in the session. */
 function GamificationHost() {
   const seen = useSessionStore((s) => s.gamificationSeen);
   const markSeen = useSessionStore((s) => s.markGamificationSeen);
@@ -136,33 +153,62 @@ function GamificationHost() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Brand.bg },
+  safe: { flex: 1, backgroundColor: UI.bg },
   content: { padding: Spacing.lg, gap: Spacing.md, paddingBottom: Spacing.xxxl },
   headerRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.xs },
   pill: {
-    backgroundColor: Brand.surfaceElevated,
+    backgroundColor: UI.surface,
     borderRadius: Radii.pill,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
   },
-  pillAccent: { backgroundColor: Brand.accent },
-  pillText: { color: Brand.text, fontSize: 13, fontWeight: '700' },
+  pillAccent: { backgroundColor: UI.accent },
+  pillText: { color: UI.text, fontSize: 13, fontWeight: '700' },
+  banner: {
+    backgroundColor: UI.accentSoft,
+    borderRadius: Radii.lg,
+    padding: Spacing.lg,
+    gap: 2,
+    marginTop: Spacing.xs,
+  },
   row: { gap: Spacing.sm, marginTop: Spacing.md },
   tiles: { gap: Spacing.sm, paddingVertical: Spacing.xs },
   tile: { width: 128, height: 160 },
-  toastWrap: { position: 'absolute', left: 0, right: 0, bottom: Spacing.lg, paddingHorizontal: Spacing.lg },
+  lock: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderRadius: Radii.lg,
+  },
+  toastWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+  },
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    backgroundColor: Brand.surfaceElevated,
+    backgroundColor: UI.surfaceElevated,
     borderWidth: 1,
-    borderColor: Brand.border,
+    borderColor: UI.border,
     borderRadius: Radii.lg,
     padding: Spacing.lg,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
   toastBtn: {
-    backgroundColor: Brand.accent,
+    backgroundColor: UI.accent,
     borderRadius: Radii.pill,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,

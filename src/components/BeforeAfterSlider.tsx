@@ -12,7 +12,7 @@ import Animated, {
 
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { ThemedText } from '@/components/ThemedText';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { UI, Radii, Spacing, Type } from '@/theme';
 
 type Source = number | { uri: string } | null | undefined;
 
@@ -28,6 +28,8 @@ interface Props {
   /** Color-grade the AFTER side (pass the same image to `before`/`after` for a
    *  "same photo, different coloring" effect). */
   afterTint?: string;
+  /** Zoned grade on the AFTER side — `top` tints the hair region, `bottom` the face/makeup. */
+  afterZones?: { top?: string; bottom?: string };
   /** Auto-sweep bounds for the divider (0..1). Defaults to a wide sweep. */
   sweep?: [number, number];
 }
@@ -40,6 +42,7 @@ export function BeforeAfterSlider({
   autoPlay = false,
   minimal = false,
   afterTint,
+  afterZones,
   sweep = [0.22, 0.82],
 }: Props) {
   const [boxWidth, setBoxWidth] = useState(0);
@@ -106,6 +109,26 @@ export function BeforeAfterSlider({
                 />
               </>
             ) : null}
+            {afterZones ? (
+              <>
+                {afterZones.top ? (
+                  <View
+                    pointerEvents="none"
+                    style={[styles.zoneTop, { backgroundColor: afterZones.top }]}
+                  />
+                ) : null}
+                {afterZones.bottom ? (
+                  <View
+                    pointerEvents="none"
+                    style={[styles.zoneBottom, { backgroundColor: afterZones.bottom }]}
+                  />
+                ) : null}
+                <View
+                  pointerEvents="none"
+                  style={[StyleSheet.absoluteFill, { backgroundColor: '#FFFFFF', opacity: 0.05 }]}
+                />
+              </>
+            ) : null}
           </View>
           {!minimal && (
             <View style={styles.afterTag}>
@@ -128,13 +151,15 @@ export function BeforeAfterSlider({
 }
 
 const styles = StyleSheet.create({
-  wrap: { width: '100%', overflow: 'hidden', backgroundColor: Brand.skeletonBase },
+  wrap: { width: '100%', overflow: 'hidden', backgroundColor: UI.skeletonBase },
   afterLayer: { position: 'absolute', top: 0, bottom: 0, left: 0, overflow: 'hidden' },
+  zoneTop: { position: 'absolute', top: 0, left: 0, right: 0, height: '44%', opacity: 0.32 },
+  zoneBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '58%', opacity: 0.24 },
   beforeTag: {
     position: 'absolute',
     right: Spacing.md,
     bottom: Spacing.md,
-    backgroundColor: Brand.overlay,
+    backgroundColor: UI.overlay,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: Radii.sm,
@@ -143,7 +168,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: Spacing.md,
     bottom: Spacing.md,
-    backgroundColor: Brand.overlay,
+    backgroundColor: UI.overlay,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: Radii.sm,

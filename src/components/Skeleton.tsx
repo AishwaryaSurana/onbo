@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Brand, Radii } from '@/theme';
+import { UI, Radii } from '@/theme';
 
 interface Props {
   width?: number | `${number}%`;
@@ -34,7 +34,7 @@ export function Skeleton({ width = '100%', height = 16, radius = Radii.sm, style
   return (
     <Animated.View
       style={[
-        { width, height, borderRadius: radius, backgroundColor: Brand.skeletonHighlight },
+        { width, height, borderRadius: radius, backgroundColor: UI.skeletonHighlight },
         animatedStyle,
         style,
       ]}

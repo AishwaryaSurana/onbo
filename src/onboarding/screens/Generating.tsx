@@ -17,7 +17,7 @@ import { photoImageSource } from '@/onboarding/manifest';
 import { STAGE_COPY, aiGeneration, type GenStage } from '@/services/aiGeneration';
 import { Events, track } from '@/services/analytics/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 const STAGES: GenStage[] = ['analyzing', 'styling', 'finishing'];
 
@@ -115,7 +115,7 @@ export function Generating() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Brand.bg, paddingHorizontal: Spacing.lg },
+  safe: { flex: 1, backgroundColor: UI.bg, paddingHorizontal: Spacing.lg },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.md },
   centerText: { textAlign: 'center' },
   emoji: { fontSize: 44 },
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
     height: 168,
     borderRadius: 84,
     borderWidth: 3,
-    borderColor: Brand.accent,
+    borderColor: UI.accent,
     borderTopColor: 'transparent',
     borderRightColor: 'transparent',
   },
   dots: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.sm },
-  dot: { width: 28, height: 4, borderRadius: 2, backgroundColor: Brand.border },
-  dotOn: { backgroundColor: Brand.accent },
+  dot: { width: 28, height: 4, borderRadius: 2, backgroundColor: UI.border },
+  dotOn: { backgroundColor: UI.accent },
   footer: { gap: Spacing.sm, paddingBottom: Spacing.sm },
 });

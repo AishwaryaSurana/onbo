@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { SequencerContext, type SequencerApi } from '@/onboarding/SequencerContext';
 import { buildSteps } from '@/onboarding/steps.config';
-import { Events, track } from '@/services/analytics/analytics';
+import { track } from '@/services/analytics/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
 /**
@@ -44,10 +44,7 @@ export function OnboardingSequencer() {
     setStepIndex(safeIndex - 1);
   }, [safeIndex, setStepIndex]);
 
-  const skip = useCallback(() => {
-    if (step.id === 'styleTeaser') track(Events.styleTeaserSkipped, { index: safeIndex });
-    next();
-  }, [step.id, safeIndex, next]);
+  const skip = useCallback(() => next(), [next]);
 
   const jumpTo = useCallback(
     (stepId: string) => {

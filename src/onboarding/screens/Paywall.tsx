@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { ThemedText } from '@/components/ThemedText';
-import { flags } from '@/config/flags';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { resultImageSource } from '@/onboarding/manifest';
 import { StepScaffold } from '@/onboarding/StepScaffold';
@@ -12,27 +11,27 @@ import { Events, track } from '@/services/analytics/analytics';
 import { billing } from '@/services/billing/billing';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
-/** PLAN.md 3.9 — framed around the result the user just generated. Trial + annual
- *  pre-selected, price visible, soft-close on decline, restore available. */
+/** Step 6 — contextual paywall. Framed on what they just did. Annual + free-trial
+ *  pre-selected via a single TOGGLE (not two competing buttons); real price shown. */
 export function Paywall() {
   const { next, goToDashboard } = useSequencer();
   const goal = useOnboardingStore((s) => s.goal) ?? 'exploring';
   const resultStyleId = useOnboardingStore((s) => s.resultStyleId);
   const setEntitlement = useSessionStore((s) => s.setEntitlement);
 
-  const plans = billing.getOfferings();
-  const [selected, setSelected] = useState(billing.getDefaultPlanId());
+  const annual = billing.getOfferings().find((p) => p.id === 'annual') ?? billing.getOfferings()[0];
+  const [trial, setTrial] = useState(true); // free trial pre-selected
   const [busy, setBusy] = useState<'buy' | 'restore' | null>(null);
 
   const buy = async () => {
     setBusy('buy');
-    track(Events.trialStarted, { plan: selected });
+    track(Events.trialStarted, { plan: annual.id, trial });
     try {
-      const { entitlement } = await billing.purchase(selected);
-      setEntitlement(entitlement);
-      next(); // paywall is last -> sequencer routes to dashboard
+      const { entitlement } = await billing.purchase(annual.id);
+      setEntitlement(trial ? entitlement : 'paid');
+      goToDashboard(); // full experience — skip notification priming
     } finally {
       setBusy(null);
     }
@@ -51,29 +50,26 @@ export function Paywall() {
     }
   };
 
-  const activePlan = plans.find((p) => p.id === selected);
-
   return (
     <StepScaffold
       hideHeader
       footer={
         <View style={{ gap: Spacing.sm }}>
           <PrimaryButton
-            label={activePlan?.trialLabel ? 'Start free trial' : 'Continue'}
+            label={trial ? 'Start 7-day free trial' : `Subscribe · ${annual.priceLabel}`}
             onPress={buy}
             loading={busy === 'buy'}
           />
           <ThemedText color="textMuted" style={[Type.caption, styles.legal]}>
-            {activePlan?.trialLabel ?? activePlan?.priceLabel} · cancel anytime
+            {trial ? `Free for 7 days, then ${annual.priceLabel}` : annual.priceLabel} ·{' '}
+            {annual.subLabel} · cancel anytime
           </ThemedText>
           <View style={styles.subRow}>
-            {flags.paywallStyle === 'soft' && (
-              <Pressable onPress={goToDashboard} hitSlop={8}>
-                <ThemedText color="textSecondary" style={Type.caption}>
-                  Maybe later
-                </ThemedText>
-              </Pressable>
-            )}
+            <Pressable onPress={next} hitSlop={8}>
+              <ThemedText color="textSecondary" style={Type.caption}>
+                Maybe later
+              </ThemedText>
+            </Pressable>
             <Pressable onPress={restore} hitSlop={8}>
               <ThemedText color="textSecondary" style={Type.caption}>
                 Restore purchases
@@ -88,40 +84,41 @@ export function Paywall() {
           style={styles.heroImg}
           radius={Radii.xl}
         />
-        <ThemedText style={Type.hero}>Unlock this look + 200 more</ThemedText>
+        <ThemedText style={Type.hero}>Unlock this style + 200 more</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          Your full pack renders in high resolution, no watermark, ready to download.
+          Full-resolution renders, no watermark, every template — ready to export.
         </ThemedText>
       </View>
 
-      <View style={styles.plans}>
-        {plans.map((p) => {
-          const active = p.id === selected;
-          return (
-            <Pressable
-              key={p.id}
-              onPress={() => setSelected(p.id)}
-              style={[styles.plan, active && styles.planActive]}>
-              {p.badge && (
-                <View style={styles.badge}>
-                  <ThemedText style={styles.badgeText}>{p.badge}</ThemedText>
-                </View>
-              )}
-              <View style={styles.planRow}>
-                <View style={[styles.radio, active && styles.radioOn]}>
-                  {active && <View style={styles.radioDot} />}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <ThemedText style={Type.bodyStrong}>{p.title}</ThemedText>
-                  <ThemedText color="textSecondary" style={Type.caption}>
-                    {p.subLabel}
-                  </ThemedText>
-                </View>
-                <ThemedText style={Type.bodyStrong}>{p.priceLabel}</ThemedText>
-              </View>
-            </Pressable>
-          );
-        })}
+      <View style={styles.planCard}>
+        <View style={styles.planTop}>
+          <View style={{ flex: 1 }}>
+            <ThemedText style={Type.bodyStrong}>{annual.title} · {annual.priceLabel}</ThemedText>
+            <ThemedText color="textSecondary" style={Type.caption}>
+              {annual.subLabel}
+            </ThemedText>
+          </View>
+          {annual.badge ? (
+            <View style={styles.badge}>
+              <ThemedText style={styles.badgeText}>{annual.badge}</ThemedText>
+            </View>
+          ) : null}
+        </View>
+
+        <View style={styles.trialRow}>
+          <View style={{ flex: 1 }}>
+            <ThemedText style={Type.bodyStrong}>Free trial</ThemedText>
+            <ThemedText color="textSecondary" style={Type.caption}>
+              7 days free — we&apos;ll remind you before it ends
+            </ThemedText>
+          </View>
+          <Switch
+            value={trial}
+            onValueChange={setTrial}
+            trackColor={{ true: UI.accent, false: UI.border }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
       </View>
 
       <View style={styles.proof}>
@@ -135,36 +132,32 @@ export function Paywall() {
 
 const styles = StyleSheet.create({
   hero: { gap: Spacing.sm, alignItems: 'center', marginTop: Spacing.sm },
-  heroImg: { width: 160, height: 160, marginBottom: Spacing.sm },
-  plans: { gap: Spacing.md, marginTop: Spacing.lg },
-  plan: {
+  heroImg: { width: 150, height: 150, marginBottom: Spacing.sm },
+  planCard: {
+    marginTop: Spacing.lg,
     borderRadius: Radii.lg,
     borderWidth: 1.5,
-    borderColor: Brand.border,
-    backgroundColor: Brand.surface,
+    borderColor: UI.accent,
+    backgroundColor: UI.accentSoft,
     padding: Spacing.lg,
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
-  planActive: { borderColor: Brand.accent, backgroundColor: Brand.accentSoft },
-  planRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  badge: { alignSelf: 'flex-start' },
-  badgeText: {
-    color: Brand.accent,
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+  planTop: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm },
+  badge: {
+    backgroundColor: UI.accent,
+    borderRadius: Radii.sm,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
   },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: Brand.textMuted,
+  badgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800', letterSpacing: 0.4 },
+  trialRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: UI.border,
+    paddingTop: Spacing.md,
   },
-  radioOn: { borderColor: Brand.accent },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Brand.accent },
   proof: { alignItems: 'center', marginTop: Spacing.lg },
   legal: { textAlign: 'center' },
   subRow: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.xl, paddingTop: Spacing.xs },

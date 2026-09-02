@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { Brand, navTheme } from '@/theme';
+import { navTheme, UI } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,14 +25,14 @@ export default function RootLayout() {
   if (!ready) return null; // splash stays up until persisted stores are loaded
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: Brand.bg }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: UI.bg }}>
       <SafeAreaProvider>
         <ThemeProvider value={navTheme}>
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
           <Stack
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: Brand.bg },
+              contentStyle: { backgroundColor: UI.bg },
               animation: 'fade',
             }}>
             <Stack.Screen name="index" />

@@ -5,17 +5,17 @@ import { ConsentCheckbox } from '@/components/ConsentCheckbox';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useSequencer } from '@/onboarding/SequencerContext';
-import { Events, track } from '@/services/analytics/analytics';
-import { mockAuth } from '@/services/auth/mockAuth';
-import type { AuthMethod } from '@/services/auth/AuthService';
 import { StepScaffold } from '@/onboarding/StepScaffold';
+import { Events, track } from '@/services/analytics/analytics';
+import type { AuthMethod } from '@/services/auth/AuthService';
+import { mockAuth } from '@/services/auth/mockAuth';
 import { useSessionStore } from '@/store/sessionStore';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 type View_ = 'choices' | 'email' | 'sent';
 
-/** PLAN.md 3.8 — social one-tap primary, email as a clearly-secondary MAGIC LINK
- *  (never a typed OTP), and a single consent checkbox. Appears only AFTER the result. */
+/** Step 5 — deferred, lightweight signup. Apple/Google one-tap primary (not a form),
+ *  email as a magic link, one consent checkbox. Only after the aha moment. */
 export function Signup() {
   const { next } = useSequencer();
   const signIn = useSessionStore((s) => s.signIn);
@@ -83,7 +83,7 @@ export function Signup() {
           {view === 'choices' ? (
             <>
               <PrimaryButton
-                label="Continue with Apple"
+                label=" Continue with Apple"
                 onPress={() => withProvider('apple')}
                 loading={busy === 'apple'}
                 disabled={!consent}
@@ -96,7 +96,7 @@ export function Signup() {
                 disabled={!consent}
               />
               <PrimaryButton
-                label="Continue with email"
+                label="Use email instead"
                 variant="ghost"
                 onPress={() => setView('email')}
                 disabled={!consent}
@@ -108,7 +108,7 @@ export function Signup() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@email.com"
-                placeholderTextColor={Brand.textMuted}
+                placeholderTextColor={UI.textMuted}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -127,9 +127,9 @@ export function Signup() {
         </View>
       }>
       <View style={styles.copy}>
-        <ThemedText style={Type.hero}>Save your preview</ThemedText>
+        <ThemedText style={Type.hero}>Save this and keep editing</ThemedText>
         <ThemedText color="textSecondary" style={Type.body}>
-          Create a free account to keep this result and generate your full pack.
+          Create a free account to keep your result and pick up where you left off.
         </ThemedText>
       </View>
     </StepScaffold>
@@ -144,10 +144,10 @@ const styles = StyleSheet.create({
   input: {
     height: 52,
     borderRadius: Radii.md,
-    borderWidth: 1,
-    borderColor: Brand.border,
-    backgroundColor: Brand.surface,
-    color: Brand.text,
+    borderWidth: 1.5,
+    borderColor: UI.border,
+    backgroundColor: UI.surface,
+    color: UI.text,
     paddingHorizontal: Spacing.lg,
     fontSize: 16,
   },

@@ -1,7 +1,7 @@
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { UI, Radii, Spacing, Type } from '@/theme';
 
 const TERMS_URL = 'https://example.com/terms';
 const PRIVACY_URL = 'https://example.com/privacy';
@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: Radii.sm,
     borderWidth: 2,
-    borderColor: Brand.textMuted,
+    borderColor: UI.textMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  boxOn: { backgroundColor: Brand.accent, borderColor: Brand.accent },
+  boxOn: { backgroundColor: UI.accent, borderColor: UI.accent },
   check: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', lineHeight: 16 },
   text: { flex: 1 },
 });

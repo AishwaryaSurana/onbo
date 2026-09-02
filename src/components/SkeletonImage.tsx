@@ -4,7 +4,7 @@ import { ActivityIndicator, StyleProp, StyleSheet, View, ViewStyle } from 'react
 
 import { Skeleton } from '@/components/Skeleton';
 import { ThemedText } from '@/components/ThemedText';
-import { Brand, Radii, Spacing, Type } from '@/theme';
+import { UI, Radii, Spacing, Type } from '@/theme';
 
 type Source = number | { uri: string } | null | undefined;
 
@@ -54,7 +54,7 @@ export function SkeletonImage({
         <View style={StyleSheet.absoluteFill}>
           <Skeleton style={StyleSheet.absoluteFill} radius={radius} />
           <View style={styles.center}>
-            <ActivityIndicator color={Brand.textSecondary} />
+            <ActivityIndicator color={UI.textSecondary} />
           </View>
         </View>
       )}
@@ -76,7 +76,7 @@ export function SkeletonImage({
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    backgroundColor: Brand.skeletonBase,
+    backgroundColor: UI.skeletonBase,
   },
   center: {
     position: 'absolute',

@@ -1,6 +1,11 @@
 /**
  * Pure step-ordering logic (no component imports) so the audit invariant is unit-testable.
  * `steps.config.ts` maps these ids to screen components.
+ *
+ * Flow (per the 7-step re-creation):
+ *   1 welcome (instant value hook)  2 personalization  3 permissionPrimer
+ *   4 photoCapture → generating → resultReveal (the aha moment)
+ *   5 signup (deferred)  6 paywall (contextual)  7 notifPriming (soft close, decline path only)
  */
 import type { Flags } from '@/config/flags';
 import { Events, type AnalyticsEvent } from '@/services/analytics/analytics';
@@ -8,13 +13,13 @@ import { Events, type AnalyticsEvent } from '@/services/analytics/analytics';
 export type StepId =
   | 'welcome'
   | 'personalization'
-  | 'styleTeaser'
   | 'permissionPrimer'
   | 'photoCapture'
   | 'generating'
   | 'resultReveal'
   | 'signup'
-  | 'paywall';
+  | 'paywall'
+  | 'notifPriming';
 
 export interface StepMeta {
   id: StepId;
@@ -25,19 +30,22 @@ export interface StepMeta {
 const BASE: StepMeta[] = [
   { id: 'welcome', analyticsKey: Events.onboardingStarted, skippable: false },
   { id: 'personalization', skippable: true },
-  { id: 'styleTeaser', analyticsKey: Events.styleTeaserViewed, skippable: true },
   { id: 'permissionPrimer', analyticsKey: Events.permissionPrimerShown, skippable: false },
   { id: 'photoCapture', skippable: false },
   { id: 'generating', skippable: false },
   { id: 'resultReveal', analyticsKey: Events.resultViewed, skippable: false },
   { id: 'signup', skippable: false },
   { id: 'paywall', analyticsKey: Events.paywallViewed, skippable: false },
+  // Reached only when the paywall is declined — soft close + push priming.
+  { id: 'notifPriming', skippable: true },
 ];
 
 export function buildStepOrder(flags: Flags): StepMeta[] {
   let steps = [...BASE];
   if (!flags.quizEnabled) steps = steps.filter((s) => s.id !== 'personalization');
-  if (flags.paywallPlacement === 'day_2') steps = steps.filter((s) => s.id !== 'paywall');
+  if (flags.paywallPlacement === 'day_2') {
+    steps = steps.filter((s) => s.id !== 'paywall' && s.id !== 'notifPriming');
+  }
   assertOrderInvariant(steps);
   return steps;
 }
