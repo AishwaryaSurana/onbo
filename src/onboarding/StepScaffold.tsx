@@ -17,7 +17,7 @@ import { Brand, Spacing } from '@/theme';
 
 interface Props {
   children: ReactNode;
-  /** Sticky bottom area — usually the primary CTA. */
+  /** Sticky bottom area - usually the primary CTA. */
   footer?: ReactNode;
   /** Hide the top progress/nav row (e.g. immersive Generating / ResultReveal). */
   hideHeader?: boolean;
@@ -44,36 +44,45 @@ export function StepScaffold({
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={avoidKeyboard && Platform.OS === 'ios' ? 'padding' : undefined}>
-      {!hideHeader && (
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
-            onPress={back}
-            disabled={!canGoBack}
-            hitSlop={12}
-            style={styles.backBtn}>
-            <ThemedText color={canGoBack ? 'text' : 'textMuted'} style={styles.backChevron}>
-              ‹
-            </ThemedText>
-          </Pressable>
+        behavior={avoidKeyboard && Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        {!hideHeader ? (
+          <View style={styles.header}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={back}
+              disabled={!canGoBack}
+              hitSlop={12}
+              style={styles.backBtn}
+            >
+              <ThemedText color={canGoBack ? 'text' : 'textMuted'} style={styles.backChevron}>
+                {'‹'}
+              </ThemedText>
+            </Pressable>
 
-          <View style={styles.progressWrap}>
-            <ProgressBar value={progress} />
+            <View style={styles.progressWrap}>
+              <ProgressBar value={progress} />
+            </View>
+
+            <View style={styles.skipSlot}>
+              {skippable ? <SkipButton onPress={skip} /> : null}
+            </View>
           </View>
+        ) : null}
 
-          <View style={styles.skipSlot}>{skippable ? <SkipButton onPress={skip} /> : null}</View>
-        </View>
-      )}
+        <Body
+          style={styles.body}
+          contentContainerStyle={[
+            scroll ? styles.bodyContent : styles.bodyContentFlex,
+            contentStyle,
+          ]}
+          {...(scroll ? { keyboardShouldPersistTaps: 'handled' as const } : {})}
+        >
+          {children}
+        </Body>
 
-      <Body
-        style={styles.body}
-        contentContainerStyle={[scroll ? styles.bodyContent : styles.bodyContentFlex, contentStyle]}>
-        {children}
-      </Body>
-
-      {footer ? <View style={styles.footer}>{footer}</View> : null}
+        {footer ? <View style={styles.footer}>{footer}</View> : null}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
