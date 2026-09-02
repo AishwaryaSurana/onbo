@@ -117,10 +117,17 @@ export const PAYWALL_REVIEWS: { name: string; title: string; body: string }[] = 
   },
 ];
 
-/** Dashboard category tiles, keyed by name. Ordering per goal lives in the dashboard. */
+/** Dashboard promo banner carousel. */
+export const PROMO_CARDS: { kicker: string; line1: string; line2: string; image: ImgSource }[] = [
+  { kicker: 'TRY 100+ PACKS NOW', line1: 'AI Photo', line2: 'GENERATOR', image: P[10] },
+  { kicker: 'NEW THIS WEEK', line1: 'Cinematic', line2: 'PORTRAITS', image: P[3] },
+  { kicker: 'TRENDING', line1: 'Retro Film', line2: 'LOOKS', image: P[13] },
+];
+
+/** Dashboard category tiles, keyed by name. */
 export const DASHBOARD_TILES: Record<string, ImgSource[]> = {
-  'Reels & TikToks': [P[8], P[9], P[10]],
-  'Portraits & Selfies': [P[10], P[11], P[2]],
-  'YouTube Thumbnails': [P[13], P[14], P[15]],
-  'Trending Templates': [P[0], P[1], P[3]],
+  'Professional Headshots': [P[2], P[7], P[10], P[11], P[8]],
+  'Dating Photos': [P[3], P[12], P[15], P[4], P[13]],
+  'Background Enhancer': [P[0], P[5], P[9], P[1], P[6]],
+  'Creative Styles': [P[14], P[1], P[8], P[10], P[7]],
 };
