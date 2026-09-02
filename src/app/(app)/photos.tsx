@@ -1,16 +1,18 @@
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TabPaywallGate } from '@/components/TabPaywallGate';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing, Type, UI } from '@/theme';
 
-export default function Stub() {
+export default function AIPhotos() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.center}>
-        <ThemedText style={Type.subtitle}>photos</ThemedText>
-        <ThemedText color="textMuted" style={Type.caption}>Not part of the onboarding build</ThemedText>
+        <ThemedText style={Type.subtitle}>AI Photos</ThemedText>
+        <ThemedText color="textMuted" style={Type.caption}>Generate a pack from your selfies</ThemedText>
       </View>
+      <TabPaywallGate />
     </SafeAreaView>
   );
 }

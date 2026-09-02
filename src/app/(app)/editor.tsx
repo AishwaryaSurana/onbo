@@ -1,16 +1,18 @@
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TabPaywallGate } from '@/components/TabPaywallGate';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing, Type, UI } from '@/theme';
 
-export default function Stub() {
+export default function AIEditor() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.center}>
-        <ThemedText style={Type.subtitle}>editor</ThemedText>
-        <ThemedText color="textMuted" style={Type.caption}>Not part of the onboarding build</ThemedText>
+        <ThemedText style={Type.subtitle}>AI Editor</ThemedText>
+        <ThemedText color="textMuted" style={Type.caption}>Retouch and restyle any photo</ThemedText>
       </View>
+      <TabPaywallGate />
     </SafeAreaView>
   );
 }
