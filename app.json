@@ -6,13 +6,19 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "aiphotoonboarding",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0B0F",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Take a selfie so we can create your AI photos on-device before anything is uploaded.",
+        "NSPhotoLibraryUsageDescription": "Pick a few photos of yourself so we can generate your AI photos. Nothing is uploaded without your consent."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0B0B0F",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -28,9 +34,21 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0B0B0F",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Pick a few photos of yourself so we can generate your AI photos. Nothing is uploaded without your consent."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Take a selfie so we can create your AI photos. Nothing is uploaded without your consent."
         }
       ]
     ],

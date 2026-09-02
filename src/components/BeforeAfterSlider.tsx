@@ -1,0 +1,133 @@
+import { useEffect, useState } from 'react';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
+
+import { SkeletonImage } from '@/components/SkeletonImage';
+import { ThemedText } from '@/components/ThemedText';
+import { Brand, Radii, Spacing, Type } from '@/theme';
+
+type Source = number | { uri: string } | null | undefined;
+
+interface Props {
+  before: Source;
+  after: Source;
+  height?: number;
+  radius?: number;
+  /** Ping-pong the divider automatically until the user drags it. */
+  autoPlay?: boolean;
+}
+
+export function BeforeAfterSlider({
+  before,
+  after,
+  height = 380,
+  radius = Radii.lg,
+  autoPlay = false,
+}: Props) {
+  const [boxWidth, setBoxWidth] = useState(0);
+  const widthSV = useSharedValue(0);
+  const divider = useSharedValue(0.5); // 0..1
+  const interacted = useSharedValue(false);
+
+  useEffect(() => {
+    if (!autoPlay) return;
+    divider.value = withRepeat(
+      withTiming(0.8, { duration: 2400, easing: Easing.inOut(Easing.quad) }),
+      -1,
+      true,
+    );
+  }, [autoPlay, divider]);
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const w = e.nativeEvent.layout.width;
+    widthSV.value = w;
+    setBoxWidth(w);
+  };
+
+  const pan = Gesture.Pan()
+    .onBegin(() => {
+      interacted.value = true;
+    })
+    .onUpdate((e) => {
+      if (widthSV.value <= 0) return;
+      divider.value = Math.max(0.04, Math.min(0.96, e.x / widthSV.value));
+    });
+
+  // Clip the "after" layer to a pixel width; the inner image stays full box width so it never squishes.
+  const afterClip = useAnimatedStyle(() => ({ width: divider.value * widthSV.value }));
+  const handleStyle = useAnimatedStyle(() => ({ left: divider.value * widthSV.value }));
+
+  return (
+    <GestureDetector gesture={pan}>
+      <View onLayout={onLayout} style={[styles.wrap, { height, borderRadius: radius }]}>
+        {/* BEFORE fills the whole box */}
+        <SkeletonImage source={before} style={StyleSheet.absoluteFill} radius={radius} />
+        <View style={styles.beforeTag}>
+          <ThemedText style={Type.caption}>BEFORE</ThemedText>
+        </View>
+
+        {/* AFTER clipped from the left */}
+        <Animated.View style={[styles.afterLayer, afterClip]}>
+          <View style={{ width: boxWidth || '100%', height: '100%' }}>
+            <SkeletonImage source={after} style={StyleSheet.absoluteFill} radius={0} />
+          </View>
+          <View style={styles.afterTag}>
+            <ThemedText style={Type.caption}>AFTER</ThemedText>
+          </View>
+        </Animated.View>
+
+        <Animated.View style={[styles.handle, handleStyle]}>
+          <View style={styles.handleLine} />
+          <View style={styles.handleKnob}>
+            <ThemedText style={styles.knobGlyph}>⇔</ThemedText>
+          </View>
+        </Animated.View>
+      </View>
+    </GestureDetector>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrap: { width: '100%', overflow: 'hidden', backgroundColor: Brand.skeletonBase },
+  afterLayer: { position: 'absolute', top: 0, bottom: 0, left: 0, overflow: 'hidden' },
+  beforeTag: {
+    position: 'absolute',
+    right: Spacing.md,
+    bottom: Spacing.md,
+    backgroundColor: Brand.overlay,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: Radii.sm,
+  },
+  afterTag: {
+    position: 'absolute',
+    left: Spacing.md,
+    bottom: Spacing.md,
+    backgroundColor: Brand.overlay,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: Radii.sm,
+  },
+  handle: { position: 'absolute', top: 0, bottom: 0, width: 2, marginLeft: -1 },
+  handleLine: { flex: 1, width: 2, backgroundColor: '#FFFFFF' },
+  handleKnob: {
+    position: 'absolute',
+    top: '50%',
+    left: -18,
+    marginTop: -18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  knobGlyph: { color: '#000', fontSize: 16, fontWeight: '700' },
+});
