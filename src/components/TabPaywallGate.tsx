@@ -8,9 +8,9 @@ import { billing } from '@/services/billing/billing';
 import { useSessionStore } from '@/store/sessionStore';
 
 /**
- * Drop into a tab screen to gate it behind the paywall for non-subscribers.
- * Shows the PaywallSheet (in a top-level Modal) every time the tab gains focus while
- * there's no entitlement; dismissing just reveals the tab's browse screen behind it.
+ * Drop into a tab screen: the billing screen appears as a full-screen Modal every time
+ * the tab gains focus (unless the user has already subscribed). Dismissing just reveals
+ * the tab's browse screen behind it.
  */
 export function TabPaywallGate() {
   const entitlement = useSessionStore((s) => s.entitlement);
@@ -20,15 +20,12 @@ export function TabPaywallGate() {
 
   useFocusEffect(
     useCallback(() => {
-      if (entitlement === 'none') {
-        setOpen(true);
-        track(Events.paywallViewed, { source: 'tab_gate' });
-      }
+      if (entitlement === 'paid') return; // already fully subscribed — no gate
+      setOpen(true);
+      track(Events.paywallViewed, { source: 'tab_gate' });
       return () => setOpen(false);
     }, [entitlement]),
   );
-
-  const close = () => setOpen(false);
 
   const subscribe = async (planId: string) => {
     setBusy(true);
@@ -43,8 +40,13 @@ export function TabPaywallGate() {
   };
 
   return (
-    <Modal transparent visible={open} statusBarTranslucent animationType="slide" onRequestClose={close}>
-      <PaywallSheet onClose={close} onSubscribe={subscribe} subscribing={busy} />
+    <Modal
+      transparent
+      visible={open}
+      statusBarTranslucent
+      animationType="slide"
+      onRequestClose={() => setOpen(false)}>
+      <PaywallSheet onClose={() => setOpen(false)} onSubscribe={subscribe} subscribing={busy} />
     </Modal>
   );
 }
