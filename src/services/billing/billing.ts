@@ -29,8 +29,8 @@ const PLANS: Plan[] = [
   {
     id: 'yearly_pro',
     title: 'Yearly Pro',
-    priceLabel: '$5',
-    pricePeriod: '/week',
+    priceLabel: '$0.71',
+    pricePeriod: '/day',
     subLabel: '1,200 monthly credits · billed yearly',
     badge: '25% DISCOUNT',
     highlighted: true,
