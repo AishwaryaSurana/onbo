@@ -1,10 +1,8 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Modal } from 'react-native';
 
-import { PaywallSheet } from '@/components/PaywallSheet';
+import { PaywallModal } from '@/components/PaywallModal';
 import { Events, track } from '@/services/analytics/analytics';
-import { billing } from '@/services/billing/billing';
 import { useSessionStore } from '@/store/sessionStore';
 
 /**
@@ -14,9 +12,7 @@ import { useSessionStore } from '@/store/sessionStore';
  */
 export function TabPaywallGate() {
   const entitlement = useSessionStore((s) => s.entitlement);
-  const setEntitlement = useSessionStore((s) => s.setEntitlement);
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -27,26 +23,5 @@ export function TabPaywallGate() {
     }, [entitlement]),
   );
 
-  const subscribe = async (planId: string) => {
-    setBusy(true);
-    track(Events.trialStarted, { plan: planId, source: 'tab_gate' });
-    try {
-      const { entitlement: ent } = await billing.purchase(planId);
-      setEntitlement(ent);
-      setOpen(false);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Modal
-      transparent
-      visible={open}
-      statusBarTranslucent
-      animationType="slide"
-      onRequestClose={() => setOpen(false)}>
-      <PaywallSheet onClose={() => setOpen(false)} onSubscribe={subscribe} subscribing={busy} />
-    </Modal>
-  );
+  return <PaywallModal visible={open} onClose={() => setOpen(false)} source="tab_gate" />;
 }

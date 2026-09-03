@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PaywallModal } from '@/components/PaywallModal';
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { StreakModal } from '@/components/StreakModal';
 import { ThemedText } from '@/components/ThemedText';
@@ -32,6 +33,7 @@ export default function Dashboard() {
     displayName && !displayName.includes('@') ? displayName.trim().split(' ')[0] : null;
   const initial = (firstName ?? 'A').charAt(0).toUpperCase();
   const credits = entitlement === 'none' ? '0' : '1,200';
+  const [payOpen, setPayOpen] = useState(false);
 
   useEffect(() => {
     track(Events.dashboardReached, { entitlement, goal: goal ?? 'unset' });
@@ -49,7 +51,7 @@ export default function Dashboard() {
             <Text style={styles.trophyTxt}>🏆 1</Text>
           </View>
           <View style={{ flex: 1 }} />
-          <Pressable style={styles.creditsPill}>
+          <Pressable style={styles.creditsPill} onPress={() => setPayOpen(true)}>
             <Text style={styles.creditsTxt}>🪙 {credits} · </Text>
             <Text style={[styles.creditsTxt, { color: UI.accent }]}>Upgrade</Text>
           </Pressable>
@@ -71,6 +73,7 @@ export default function Dashboard() {
       </ScrollView>
 
       <GamificationHost />
+      <PaywallModal visible={payOpen} onClose={() => setPayOpen(false)} source="dashboard_upgrade" />
     </SafeAreaView>
   );
 }
