@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CreateResultModal } from '@/components/CreateResultModal';
 import { SkeletonImage } from '@/components/SkeletonImage';
@@ -25,6 +25,7 @@ interface Props {
 /** Shared "browse" screen for the AI Photos / AI Editor tabs (revealed when the paywall
  *  modal is dismissed). */
 export function TabScreen({ subtitle, chips, sections }: Props) {
+  const insets = useSafeAreaInsets();
   const [activeChip, setActiveChip] = useState(0);
   const [toast, setToast] = useState(true);
   const [picked, setPicked] = useState<Src | null>(null);
@@ -68,7 +69,9 @@ export function TabScreen({ subtitle, chips, sections }: Props) {
       <CreateResultModal image={picked} onClose={() => setPicked(null)} />
 
       {toast && (
-        <Pressable style={styles.toast} onPress={() => setToast(false)}>
+        <Pressable
+          style={[styles.toast, { top: insets.top + Spacing.sm }]}
+          onPress={() => setToast(false)}>
           <Text style={styles.toastCheck}>✓</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.toastTitle}>You&apos;ve been given 16 credits!</Text>
@@ -192,7 +195,6 @@ const styles = StyleSheet.create({
 
   toast: {
     position: 'absolute',
-    top: Spacing.md,
     left: Spacing.lg,
     right: Spacing.lg,
     flexDirection: 'row',
