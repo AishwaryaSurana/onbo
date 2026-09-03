@@ -82,9 +82,16 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
   return (set.find((s) => s.id === styleId) ?? set[0]).after;
 }
 
-/** Template result shown full-screen on the Welcome screen (same subject, polished grade). */
-export const WELCOME_BEFORE = P[10];
-export const WELCOME_AFTER = P[10];
+/** Welcome (splash) hero slider — same person, progressively edited to a studio headshot. */
+const H = [
+  require('@/assets/onboarding/hero1.jpg'),
+  require('@/assets/onboarding/hero2.jpg'),
+  require('@/assets/onboarding/hero3.jpg'),
+  require('@/assets/onboarding/hero4.jpg'),
+];
+/** "Before" side cycles through these; "after" side is the finished studio headshot. */
+export const WELCOME_SLIDES = [H[0], H[1], H[2]];
+export const WELCOME_RESULT = H[3];
 
 /** Full-bleed background for the Sign-in screen. */
 export const SIGNIN_BG = P[13];
