@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 56,
-    borderRadius: Radii.pill,
+    borderRadius: 5,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: Spacing.xl,
   },

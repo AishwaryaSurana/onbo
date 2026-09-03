@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   createBtn: {
     marginLeft: 'auto',
     backgroundColor: UI.accent,
-    borderRadius: Radii.pill,
+    borderRadius: 5,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
   },
