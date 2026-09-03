@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { PAYWALL_AVATARS, PAYWALL_CARDS, PAYWALL_REVIEWS } from '@/onboarding/manifest';
@@ -33,6 +33,7 @@ interface Props {
 
 /** The Aragon-style paywall UI. Reused by the onboarding step and the tab gate. */
 export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
+  const insets = useSafeAreaInsets();
   const plans = billing.getOfferings();
   const [selected, setSelected] = useState(billing.getDefaultPlanId());
 
@@ -43,12 +44,10 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
         locations={[0, 0.45, 1]}
         style={StyleSheet.absoluteFill}
       />
-      <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-        <Pressable onPress={onClose} hitSlop={12} style={styles.close}>
-          <Text style={styles.closeX}>✕</Text>
-        </Pressable>
-
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <View style={styles.safe}>
+        <ScrollView
+          contentContainerStyle={[styles.scroll, { paddingTop: Math.max(insets.top, 24) + 44 }]}
+          showsVerticalScrollIndicator={false}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -167,7 +166,7 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
           </View>
         </ScrollView>
 
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable onPress={() => onSubscribe(selected)} disabled={subscribing} style={styles.cta}>
             <Text style={styles.ctaTxt}>{subscribing ? 'Processing…' : 'Continue'}</Text>
           </Pressable>
@@ -177,7 +176,17 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
             <Text style={styles.legal}>Privacy</Text>
           </View>
         </View>
-      </SafeAreaView>
+
+        {/* rendered last so it always sits on top and stays tappable */}
+        <Pressable
+          onPress={onClose}
+          hitSlop={16}
+          style={[styles.close, { top: Math.max(insets.top, 24) }]}
+          accessibilityRole="button"
+          accessibilityLabel="Close">
+          <Text style={styles.closeX}>✕</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -185,9 +194,19 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#141019' },
   safe: { flex: 1 },
-  close: { position: 'absolute', right: Spacing.lg, top: Spacing.sm, zIndex: 5, padding: 6 },
-  closeX: { color: D.text, fontSize: 20, fontWeight: '700' },
-  scroll: { paddingHorizontal: Spacing.lg, paddingTop: Spacing.xxl, paddingBottom: Spacing.xl, gap: Spacing.lg },
+  close: {
+    position: 'absolute',
+    right: Spacing.lg,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 20,
+  },
+  closeX: { color: D.text, fontSize: 17, fontWeight: '800' },
+  scroll: { paddingHorizontal: Spacing.lg, paddingBottom: Spacing.xl, gap: Spacing.lg },
 
   cardsRow: { gap: Spacing.md, paddingRight: Spacing.lg },
   card: { width: 200, height: 300, borderRadius: Radii.xl, overflow: 'hidden', backgroundColor: D.card },

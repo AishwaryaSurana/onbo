@@ -2,7 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Radii, Spacing } from '@/theme';
 
@@ -17,6 +17,7 @@ const GEN_MS = 2200;
  * one-time unlock to "download" the full-res image. Nothing is actually generated.
  */
 export function CreateResultModal({ image, onClose }: { image: Src | null; onClose: () => void }) {
+  const insets = useSafeAreaInsets();
   const [stage, setStage] = useState<Stage>('generating');
 
   useEffect(() => {
@@ -32,6 +33,8 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
   };
 
   const locked = stage === 'preview' || stage === 'purchasing';
+  const topPad = Math.max(insets.top, 24);
+  const botPad = Math.max(insets.bottom, 16);
 
   return (
     <Modal
@@ -42,11 +45,8 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
       onRequestClose={onClose}>
       <View style={styles.root}>
         <LinearGradient colors={['#1b1420', '#0e0b12']} style={StyleSheet.absoluteFill} />
-        <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-          <Pressable style={styles.close} onPress={onClose} hitSlop={12}>
-            <Text style={styles.x}>✕</Text>
-          </Pressable>
 
+        <View style={[styles.body, { paddingTop: topPad + 44, paddingBottom: botPad }]}>
           {stage === 'generating' ? (
             <View style={styles.center}>
               <ActivityIndicator color="#F5620E" size="large" />
@@ -105,7 +105,17 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
               </>
             ) : null}
           </View>
-        </SafeAreaView>
+        </View>
+
+        {/* rendered last so it always sits on top and stays tappable */}
+        <Pressable
+          onPress={onClose}
+          hitSlop={16}
+          style={[styles.close, { top: topPad }]}
+          accessibilityRole="button"
+          accessibilityLabel="Close">
+          <Text style={styles.x}>✕</Text>
+        </Pressable>
       </View>
     </Modal>
   );
@@ -113,10 +123,20 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0e0b12' },
-  safe: { flex: 1 },
-  close: { position: 'absolute', right: Spacing.lg, top: Spacing.sm, zIndex: 5, padding: 6 },
-  x: { color: '#FFFFFF', fontSize: 20, fontWeight: '700' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.xl },
+  body: { flex: 1, paddingHorizontal: Spacing.lg },
+  close: {
+    position: 'absolute',
+    right: Spacing.lg,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 20,
+  },
+  x: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.md },
   imgWrap: {
     width: 300,
     height: 380,
@@ -129,20 +149,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: Spacing.md,
     alignSelf: 'center',
-    left: '50%',
-    transform: [{ translateX: -70 }],
-    minWidth: 140,
-    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.6)',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: Radii.pill,
   },
-  chipOk: { backgroundColor: 'rgba(31,169,113,0.9)' },
+  chipOk: { backgroundColor: 'rgba(31,169,113,0.92)' },
   chipTxt: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
   h: { color: '#FFFFFF', fontSize: 22, fontWeight: '800', textAlign: 'center' },
   sub: { color: 'rgba(255,255,255,0.7)', fontSize: 14, textAlign: 'center' },
-  footer: { paddingHorizontal: Spacing.lg, paddingBottom: Spacing.sm, gap: Spacing.xs },
+  footer: { gap: Spacing.xs },
   cta: {
     height: 56,
     borderRadius: Radii.pill,
