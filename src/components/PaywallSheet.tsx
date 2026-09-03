@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { RankedBadge } from '@/components/RankedBadge';
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { StyleCardCarousel } from '@/components/StyleCardCarousel';
 import { PAYWALL_AVATARS, PAYWALL_CARDS, PAYWALL_REVIEWS } from '@/onboarding/manifest';
@@ -101,15 +102,7 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
           </View>
 
           <View style={styles.rankBlock}>
-            <Text style={styles.stars}>★ ★ ★</Text>
-            <View style={styles.rankRow}>
-              <Text style={styles.laurelL}>🌿</Text>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.rankBig}>#1 RANKED</Text>
-                <Text style={styles.rankSmall}>AI PHOTO PLATFORM</Text>
-              </View>
-              <Text style={styles.laurelR}>🌿</Text>
-            </View>
+            <RankedBadge />
             <Text style={styles.lovedBy}>Loved by millions worldwide</Text>
             <View style={styles.avatars}>
               {PAYWALL_AVATARS.map((a, i) => (
