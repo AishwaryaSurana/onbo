@@ -82,16 +82,9 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
   return (set.find((s) => s.id === styleId) ?? set[0]).after;
 }
 
-/** Welcome (splash) hero slider — same person, progressively edited to a studio headshot. */
-const H = [
-  require('@/assets/onboarding/hero1.jpg'),
-  require('@/assets/onboarding/hero2.jpg'),
-  require('@/assets/onboarding/hero3.jpg'),
-  require('@/assets/onboarding/hero4.jpg'),
-];
-/** "Before" side cycles through these; "after" side is the finished studio headshot. */
-export const WELCOME_SLIDES = [H[0], H[1], H[2]];
-export const WELCOME_RESULT = H[3];
+/** Welcome (splash) hero before/after slider. */
+export const WELCOME_BEFORE = require('@/assets/onboarding/hero1.jpg');
+export const WELCOME_AFTER = require('@/assets/onboarding/hero2.jpg');
 
 /** Full-bleed background for the Sign-in screen. */
 export const SIGNIN_BG = P[13];

@@ -1,38 +1,27 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { WELCOME_RESULT, WELCOME_SLIDES } from '@/onboarding/manifest';
+import { WELCOME_AFTER, WELCOME_BEFORE } from '@/onboarding/manifest';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Spacing } from '@/theme';
 
-const SLIDE_MS = 2800;
-
 /**
- * PLAN.md 3.1 — open straight on the OUTCOME. Full-screen auto-sliding before/after:
- * the "before" cycles through raw-ish shots, the "after" is the finished studio headshot.
- * One CTA. No pitch, no signup wall, no permission prompt yet.
+ * PLAN.md 3.1 — open straight on the OUTCOME. Full-screen auto-sliding before/after
+ * and one CTA. No pitch, no signup wall, no permission prompt yet.
  */
 export function Welcome() {
   const { next } = useSequencer();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setI((n) => (n + 1) % WELCOME_SLIDES.length), SLIDE_MS);
-    return () => clearInterval(id);
-  }, []);
 
   return (
     <View style={styles.root}>
       <BeforeAfterSlider
-        key={i}
-        before={WELCOME_SLIDES[i]}
-        after={WELCOME_RESULT}
+        before={WELCOME_BEFORE}
+        after={WELCOME_AFTER}
         sweep={[0.18, 0.82]}
         height={height}
         radius={0}
