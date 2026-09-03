@@ -91,9 +91,9 @@ export const SIGNIN_BG = P[13];
 
 /** Paywall top carousel cards. */
 export const PAYWALL_CARDS: { title: string; sub: string; image: ImgSource }[] = [
-  { title: 'Editing Tools', sub: '100+ AI tools', image: P[3] },
   { title: 'Photoshoots', sub: '100+ studio styles', image: P[10] },
   { title: 'Headshots', sub: '100+ studio setups', image: P[8] },
+  { title: 'Editing Tools', sub: '100+ AI tools', image: P[3] },
 ];
 
 /** Avatar strip + reviews on the paywall. */

@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SkeletonImage } from '@/components/SkeletonImage';
+import { StyleCardCarousel } from '@/components/StyleCardCarousel';
 import { PAYWALL_AVATARS, PAYWALL_CARDS, PAYWALL_REVIEWS } from '@/onboarding/manifest';
 import { billing } from '@/services/billing/billing';
 import { Radii, Spacing } from '@/theme';
@@ -48,23 +49,7 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: Math.max(insets.top, 24) + 44 }]}
           showsVerticalScrollIndicator={false}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={244}
-            decelerationRate="fast"
-            contentContainerStyle={styles.cardsRow}>
-            {PAYWALL_CARDS.map((c, i) => (
-              <View key={c.title} style={[styles.card, i === 1 && styles.cardCenter]}>
-                <SkeletonImage source={c.image} style={StyleSheet.absoluteFill} radius={Radii.xl} fallbackLabel="" />
-                <LinearGradient colors={['transparent', 'rgba(0,0,0,0.75)']} style={StyleSheet.absoluteFill} />
-                <View style={styles.cardText}>
-                  <Text style={styles.cardTitle}>{c.title}</Text>
-                  <Text style={styles.cardSub}>{c.sub}</Text>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
+          <StyleCardCarousel cards={PAYWALL_CARDS} />
 
           <ScrollView
             horizontal
