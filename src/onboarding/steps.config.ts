@@ -4,7 +4,6 @@ import { flags } from '@/config/flags';
 import { buildStepOrder, type StepId, type StepMeta } from '@/onboarding/stepOrder';
 
 import { Generating } from './screens/Generating';
-import { NotifPriming } from './screens/NotifPriming';
 import { Paywall } from './screens/Paywall';
 import { PermissionPrimer } from './screens/PermissionPrimer';
 import { Personalization } from './screens/Personalization';
@@ -24,7 +23,6 @@ const COMPONENTS: Record<StepId, ComponentType> = {
   resultReveal: ResultReveal,
   signup: Signup,
   paywall: Paywall,
-  notifPriming: NotifPriming,
 };
 
 /** Active step list = flag-composed order (stepOrder.ts) + component mapping. */

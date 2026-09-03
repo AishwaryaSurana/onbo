@@ -2,10 +2,10 @@
  * Pure step-ordering logic (no component imports) so the audit invariant is unit-testable.
  * `steps.config.ts` maps these ids to screen components.
  *
- * Flow (per the 7-step re-creation):
+ * Flow:
  *   1 welcome (instant value hook)  2 personalization  3 permissionPrimer
  *   4 photoCapture → generating → resultReveal (the aha moment)
- *   5 signup (deferred)  6 paywall (contextual)  7 notifPriming (soft close, decline path only)
+ *   5 signup (deferred)  6 paywall (contextual) — declining soft-closes to the dashboard
  */
 import type { Flags } from '@/config/flags';
 import { Events, type AnalyticsEvent } from '@/services/analytics/analytics';
@@ -18,8 +18,7 @@ export type StepId =
   | 'generating'
   | 'resultReveal'
   | 'signup'
-  | 'paywall'
-  | 'notifPriming';
+  | 'paywall';
 
 export interface StepMeta {
   id: StepId;
@@ -36,15 +35,13 @@ const BASE: StepMeta[] = [
   { id: 'resultReveal', analyticsKey: Events.resultViewed, skippable: false },
   { id: 'signup', skippable: false },
   { id: 'paywall', analyticsKey: Events.paywallViewed, skippable: false },
-  // Reached only when the paywall is declined — soft close + push priming.
-  { id: 'notifPriming', skippable: true },
 ];
 
 export function buildStepOrder(flags: Flags): StepMeta[] {
   let steps = [...BASE];
   if (!flags.quizEnabled) steps = steps.filter((s) => s.id !== 'personalization');
   if (flags.paywallPlacement === 'day_2') {
-    steps = steps.filter((s) => s.id !== 'paywall' && s.id !== 'notifPriming');
+    steps = steps.filter((s) => s.id !== 'paywall');
   }
   assertOrderInvariant(steps);
   return steps;
