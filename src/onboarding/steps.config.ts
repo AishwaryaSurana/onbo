@@ -5,7 +5,6 @@ import { buildStepOrder, type StepId, type StepMeta } from '@/onboarding/stepOrd
 
 import { Generating } from './screens/Generating';
 import { Paywall } from './screens/Paywall';
-import { PermissionPrimer } from './screens/PermissionPrimer';
 import { Personalization } from './screens/Personalization';
 import { PhotoCapture } from './screens/PhotoCapture';
 import { ResultReveal } from './screens/ResultReveal';
@@ -17,7 +16,6 @@ export type StepDef = StepMeta & { component: ComponentType };
 const COMPONENTS: Record<StepId, ComponentType> = {
   welcome: Welcome,
   personalization: Personalization,
-  permissionPrimer: PermissionPrimer,
   photoCapture: PhotoCapture,
   generating: Generating,
   resultReveal: ResultReveal,

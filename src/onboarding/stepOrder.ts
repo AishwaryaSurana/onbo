@@ -3,9 +3,9 @@
  * `steps.config.ts` maps these ids to screen components.
  *
  * Flow:
- *   1 welcome (instant value hook)  2 personalization  3 permissionPrimer
- *   4 photoCapture → generating → resultReveal (the aha moment)
- *   5 signup (deferred)  6 paywall (contextual) — declining soft-closes to the dashboard
+ *   1 welcome (instant value hook)  2 personalization
+ *   3 photoCapture (opens with a photo-access popup) → generating → resultReveal (aha)
+ *   4 signup (deferred)  5 paywall (contextual) — declining soft-closes to the dashboard
  */
 import type { Flags } from '@/config/flags';
 import { Events, type AnalyticsEvent } from '@/services/analytics/analytics';
@@ -13,7 +13,6 @@ import { Events, type AnalyticsEvent } from '@/services/analytics/analytics';
 export type StepId =
   | 'welcome'
   | 'personalization'
-  | 'permissionPrimer'
   | 'photoCapture'
   | 'generating'
   | 'resultReveal'
@@ -29,8 +28,7 @@ export interface StepMeta {
 const BASE: StepMeta[] = [
   { id: 'welcome', analyticsKey: Events.onboardingStarted, skippable: false },
   { id: 'personalization', skippable: true },
-  { id: 'permissionPrimer', analyticsKey: Events.permissionPrimerShown, skippable: false },
-  { id: 'photoCapture', skippable: false },
+  { id: 'photoCapture', analyticsKey: Events.permissionPrimerShown, skippable: false },
   { id: 'generating', skippable: false },
   { id: 'resultReveal', analyticsKey: Events.resultViewed, skippable: false },
   { id: 'signup', skippable: false },

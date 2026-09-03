@@ -1,9 +1,9 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Device from 'expo-device';
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRef, useState } from 'react';
+import { ActivityIndicator, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { SkeletonImage } from '@/components/SkeletonImage';
@@ -15,10 +15,17 @@ import { Radii, Spacing, Type, UI } from '@/theme';
 
 type Mode = 'camera' | 'review';
 
-/** Step 4 (input) — pick the photo the look gets applied to. Camera primary; library and
- *  a curated sample keep the flow from ever dead-ending. */
+const ACCESS_POINTS = [
+  { icon: '🎨', text: 'We apply the look to a photo you choose.' },
+  { icon: '📴', text: 'Nothing is uploaded without your say-so.' },
+  { icon: '🗑️', text: 'Delete your photos and results any time.' },
+];
+
+/** Aha-moment input. The selfie screen is what you see; a photo-access popup opens over it
+ *  first (primes the OS prompt). */
 export function PhotoCapture() {
   const { next } = useSequencer();
+  const insets = useSafeAreaInsets();
   const setPhoto = useOnboardingStore((s) => s.setPhoto);
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -26,10 +33,17 @@ export function PhotoCapture() {
   const [mode, setMode] = useState<Mode>('camera');
   const [shot, setShot] = useState<{ uri: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [primer, setPrimer] = useState(true);
 
-  useEffect(() => {
-    if (permission && !permission.granted && permission.canAskAgain) requestPermission();
-  }, [permission, requestPermission]);
+  const allowAccess = async () => {
+    const cam = await requestPermission();
+    const lib = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    track(cam?.granted || lib.granted ? Events.permissionGranted : Events.permissionDenied, {
+      camera: !!cam?.granted,
+      library: !!lib.granted,
+    });
+    setPrimer(false);
+  };
 
   const commit = (uri: string, source: 'camera' | 'library' | 'sample') => {
     setPhoto(uri, source);
@@ -133,6 +147,28 @@ export function PhotoCapture() {
         <PrimaryButton label="Choose from library" variant="secondary" onPress={pickFromLibrary} />
         <PrimaryButton label="Use a sample photo" variant="ghost" onPress={useSample} />
       </View>
+
+      {/* Photo-access popup over the selfie screen */}
+      <Modal transparent visible={primer} animationType="slide" onRequestClose={() => setPrimer(false)}>
+        <View style={styles.sheetOverlay}>
+          <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, Spacing.md) + Spacing.sm }]}>
+            <ThemedText style={Type.title}>We&apos;ll need access to your photos</ThemedText>
+            <ThemedText color="textSecondary" style={Type.body}>
+              …to apply this look to one of them. Nothing is uploaded without your say-so.
+            </ThemedText>
+            <View style={styles.list}>
+              {ACCESS_POINTS.map((p) => (
+                <View key={p.text} style={styles.row}>
+                  <ThemedText style={styles.rowIcon}>{p.icon}</ThemedText>
+                  <ThemedText style={[Type.body, { flex: 1 }]}>{p.text}</ThemedText>
+                </View>
+              ))}
+            </View>
+            <PrimaryButton label="Allow photo access" onPress={allowAccess} />
+            <PrimaryButton label="Not now" variant="ghost" onPress={() => setPrimer(false)} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -182,10 +218,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: Spacing.xs,
   },
-  shutterInner: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: UI.accent,
+  shutterInner: { width: 54, height: 54, borderRadius: 27, backgroundColor: UI.accent },
+
+  sheetOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: UI.bg,
+    borderTopLeftRadius: Radii.xl,
+    borderTopRightRadius: Radii.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
+    gap: Spacing.md,
   },
+  list: { gap: Spacing.sm, marginVertical: Spacing.xs },
+  row: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    alignItems: 'center',
+    backgroundColor: UI.surface,
+    borderRadius: Radii.lg,
+    padding: Spacing.lg,
+  },
+  rowIcon: { fontSize: 20 },
 });
