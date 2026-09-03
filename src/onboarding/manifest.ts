@@ -82,9 +82,12 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
   return (set.find((s) => s.id === styleId) ?? set[0]).after;
 }
 
-/** Welcome (splash) hero before/after slider. */
-export const WELCOME_BEFORE = require('@/assets/onboarding/hero1.jpg');
-export const WELCOME_AFTER = require('@/assets/onboarding/hero3.jpg');
+/** Welcome (splash) hero before/after slider — [before, after] pairs.
+ *  Starts on pair 0; swaps to pair 1 after a delay (see Welcome.tsx). */
+export const WELCOME_PAIRS: [ImgSource, ImgSource][] = [
+  [require('@/assets/onboarding/hero1.jpg'), require('@/assets/onboarding/hero3.jpg')],
+  [require('@/assets/onboarding/hero2.jpg'), require('@/assets/onboarding/hero4.jpg')],
+];
 
 /** Full-bleed background for the Sign-in screen. */
 export const SIGNIN_BG = P[13];

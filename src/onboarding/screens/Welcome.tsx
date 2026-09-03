@@ -1,27 +1,39 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { WELCOME_AFTER, WELCOME_BEFORE } from '@/onboarding/manifest';
+import { WELCOME_PAIRS } from '@/onboarding/manifest';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Spacing } from '@/theme';
 
+const PAIR_SWAP_MS = 30000;
+
 /**
  * PLAN.md 3.1 — open straight on the OUTCOME. Full-screen auto-sliding before/after
- * and one CTA. No pitch, no signup wall, no permission prompt yet.
+ * and one CTA. Swaps to a second before/after pair after 30s.
  */
 export function Welcome() {
   const { next } = useSequencer();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+  const [pair, setPair] = useState(0);
+
+  useEffect(() => {
+    const t = setTimeout(() => setPair(1), PAIR_SWAP_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  const [before, after] = WELCOME_PAIRS[pair];
 
   return (
     <View style={styles.root}>
       <BeforeAfterSlider
-        before={WELCOME_BEFORE}
-        after={WELCOME_AFTER}
+        key={pair}
+        before={before}
+        after={after}
         sweep={[0.18, 0.82]}
         height={height}
         radius={0}
