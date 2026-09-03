@@ -7,6 +7,14 @@ whole thing runs in a simulator with no keys.
 
 The full product spec this was built from is in [`PLAN.md`](./PLAN.md).
 
+## Demo
+
+Full walkthrough (onboarding → dashboard → paywall → create/unlock):
+
+<video src="./docs/onboarding-flow.mp4" controls width="320"></video>
+
+▶️ [`docs/onboarding-flow.mp4`](./docs/onboarding-flow.mp4) — if the inline player doesn't load, download or open it directly.
+
 ---
 
 ## Quick start
