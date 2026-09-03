@@ -17,19 +17,38 @@ export interface Plan {
   highlighted?: boolean;
 }
 
+// Prices shown as a per-day equivalent (real billing period noted in subLabel).
 const PLANS: Plan[] = [
-  { id: 'yearly_lite', title: 'Yearly Lite', priceLabel: '$3', pricePeriod: '/week', subLabel: '300 monthly credits' },
+  {
+    id: 'yearly_lite',
+    title: 'Yearly Lite',
+    priceLabel: '$0.43',
+    pricePeriod: '/day',
+    subLabel: '300 monthly credits · billed yearly',
+  },
   {
     id: 'yearly_pro',
     title: 'Yearly Pro',
-    priceLabel: '$5',
-    pricePeriod: '/week',
-    subLabel: '1,200 monthly credits',
+    priceLabel: '$0.71',
+    pricePeriod: '/day',
+    subLabel: '1,200 monthly credits · billed yearly',
     badge: '25% DISCOUNT',
     highlighted: true,
   },
-  { id: 'weekly_lite', title: 'Weekly Lite', priceLabel: '$8', pricePeriod: '/week', subLabel: '200 weekly credits' },
-  { id: 'weekly_pro', title: 'Weekly Pro', priceLabel: '$12', pricePeriod: '/week', subLabel: '400 weekly credits' },
+  {
+    id: 'weekly_lite',
+    title: 'Weekly Lite',
+    priceLabel: '$1.14',
+    pricePeriod: '/day',
+    subLabel: '200 weekly credits · billed weekly',
+  },
+  {
+    id: 'weekly_pro',
+    title: 'Weekly Pro',
+    priceLabel: '$1.71',
+    pricePeriod: '/day',
+    subLabel: '400 weekly credits · billed weekly',
+  },
 ];
 
 export interface BillingService {
