@@ -51,6 +51,8 @@ export function PaywallSheet({ onClose, onSubscribe, subscribing }: Props) {
           showsVerticalScrollIndicator={false}>
           <StyleCardCarousel cards={PAYWALL_CARDS} />
 
+          <Text style={styles.hero}>The World&apos;s Most Popular AI Photo Platform</Text>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -214,6 +216,15 @@ const styles = StyleSheet.create({
   check: { color: D.green, fontSize: 15, fontWeight: '900' },
   featText: { color: D.text, fontSize: 15, fontWeight: '600' },
 
+  hero: {
+    color: D.text,
+    fontSize: 26,
+    lineHeight: 31,
+    fontWeight: '900',
+    letterSpacing: -0.4,
+    textAlign: 'center',
+    marginTop: Spacing.xs,
+  },
   h2: { color: D.text, fontSize: 19, fontWeight: '800', textAlign: 'center', marginTop: Spacing.sm },
   discountTab: {
     alignSelf: 'flex-start',
