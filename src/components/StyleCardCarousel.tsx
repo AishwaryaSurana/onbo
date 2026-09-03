@@ -113,7 +113,8 @@ function Card({
         { perspective: 800 },
         { scale: interpolate(p, [-1, 0, 1], [0.82, 1, 0.82], Extrapolation.CLAMP) },
         { translateY: interpolate(p, [-1, 0, 1], [30, 0, 30], Extrapolation.CLAMP) },
-        { rotateZ: `${interpolate(p, [-1, 0, 1], [-12, 0, 12], Extrapolation.CLAMP)}deg` },
+        // left card leans "/" (bottom-right toward centre), right card leans "\" (bottom-left toward centre)
+        { rotateZ: `${interpolate(p, [-1, 0, 1], [12, 0, -12], Extrapolation.CLAMP)}deg` },
       ],
       opacity: interpolate(p, [-1.4, -1, 0, 1, 1.4], [0.2, 0.5, 1, 0.5, 0.2], Extrapolation.CLAMP),
     };
