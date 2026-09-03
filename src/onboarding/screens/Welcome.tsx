@@ -9,7 +9,7 @@ import { WELCOME_PAIRS } from '@/onboarding/manifest';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Spacing } from '@/theme';
 
-const PAIR_SWAP_MS = 30000;
+const PAIR_SWAP_MS = 5000;
 
 /**
  * PLAN.md 3.1 — open straight on the OUTCOME. Full-screen auto-sliding before/after
