@@ -86,7 +86,7 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
  *  Starts on pair 0; swaps to pair 1 after a delay (see Welcome.tsx). */
 export const WELCOME_PAIRS: [ImgSource, ImgSource][] = [
   [require('@/assets/onboarding/hero1.jpg'), require('@/assets/onboarding/hero3.jpg')],
-  [require('@/assets/onboarding/hero2.jpg'), require('@/assets/onboarding/hero4.jpg')],
+  [require('@/assets/onboarding/hero2.jpg'), require('@/assets/onboarding/hero5.jpg')],
 ];
 
 /** Full-bleed background for the Sign-in screen. */
