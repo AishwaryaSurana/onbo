@@ -11,6 +11,7 @@ type Stage = 'generating' | 'preview' | 'purchasing' | 'unlocked';
 
 const UNLOCK_PRICE = '$0.99';
 const GEN_MS = 2200;
+const PREVIEW_BLUR = 90; // heavy (~70%) — enough that detail is unreadable
 
 /**
  * Tap a tile on the AI tabs -> fake "generating" -> blurred preview -> a nominal
@@ -61,13 +62,16 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
                     source={image}
                     style={StyleSheet.absoluteFill}
                     contentFit="cover"
-                    blurRadius={locked ? 24 : 0}
+                    blurRadius={locked ? PREVIEW_BLUR : 0}
                     transition={250}
                   />
                   {locked && (
-                    <View style={styles.chip}>
-                      <Text style={styles.chipTxt}>🔒 Preview</Text>
-                    </View>
+                    <>
+                      <View pointerEvents="none" style={styles.previewScrim} />
+                      <View style={styles.chip}>
+                        <Text style={styles.chipTxt}>🔒 Preview</Text>
+                      </View>
+                    </>
                   )}
                   {stage === 'unlocked' && (
                     <View style={[styles.chip, styles.chipOk]}>
@@ -153,6 +157,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: Radii.pill,
+  },
+  previewScrim: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(20,16,25,0.18)',
   },
   chipOk: { backgroundColor: 'rgba(31,169,113,0.92)' },
   chipTxt: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
