@@ -1,32 +1,59 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { STOCK_PORTRAIT } from '@/onboarding/manifest';
 import { Radii, Spacing } from '@/theme';
 
 type Src = number | { uri: string };
-type Stage = 'generating' | 'preview' | 'purchasing' | 'unlocked';
+type Stage = 'pick' | 'generating' | 'preview' | 'purchasing' | 'unlocked';
 
 const UNLOCK_PRICE = '$0.99';
-const GEN_MS = 2200;
-const PREVIEW_BLUR = 90; // heavy (~70%) — enough that detail is unreadable
+const GEN_MS = 1800;
+const PREVIEW_BLUR = 100; // ~80% — detail is unreadable
 
 /**
- * Tap a tile on the AI tabs -> fake "generating" -> blurred preview -> a nominal
- * one-time unlock to "download" the full-res image. Nothing is actually generated.
+ * Tap a tile on the AI tabs -> ask for a selfie / upload -> fake "generating" ->
+ * blurred preview of THAT photo -> a nominal one-time unlock to "download" it.
+ * Nothing is actually generated.
  */
 export function CreateResultModal({ image, onClose }: { image: Src | null; onClose: () => void }) {
   const insets = useSafeAreaInsets();
-  const [stage, setStage] = useState<Stage>('generating');
+  const [stage, setStage] = useState<Stage>('pick');
+  const [photo, setPhoto] = useState<Src | null>(null);
 
   useEffect(() => {
-    if (!image) return;
-    setStage('generating');
-    const t = setTimeout(() => setStage('preview'), GEN_MS);
-    return () => clearTimeout(t);
+    if (image == null) return;
+    setStage('pick');
+    setPhoto(null);
   }, [image]);
+
+  const start = (src: Src) => {
+    setPhoto(src);
+    setStage('generating');
+    setTimeout(() => setStage('preview'), GEN_MS);
+  };
+
+  const takeSelfie = async () => {
+    try {
+      await ImagePicker.requestCameraPermissionsAsync();
+      const res = await ImagePicker.launchCameraAsync({
+        cameraType: ImagePicker.CameraType.front,
+        quality: 0.7,
+      });
+      if (!res.canceled && res.assets[0]?.uri) start({ uri: res.assets[0].uri });
+    } catch {
+      /* simulator / no camera — user can upload or use a sample */
+    }
+  };
+
+  const upload = async () => {
+    const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.7 });
+    if (!res.canceled && res.assets[0]?.uri) start({ uri: res.assets[0].uri });
+  };
 
   const buy = () => {
     setStage('purchasing');
@@ -48,18 +75,39 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
         <LinearGradient colors={['#1b1420', '#0e0b12']} style={StyleSheet.absoluteFill} />
 
         <View style={[styles.body, { paddingTop: topPad + 44, paddingBottom: botPad }]}>
-          {stage === 'generating' ? (
+          {stage === 'pick' && (
+            <View style={styles.center}>
+              <Text style={styles.emoji}>📸</Text>
+              <Text style={styles.h}>Add your photo</Text>
+              <Text style={styles.sub}>We&apos;ll apply this style to a photo of you.</Text>
+              <View style={styles.pickBtns}>
+                <Pressable style={styles.cta} onPress={takeSelfie}>
+                  <Text style={styles.ctaTxt}>Take a selfie</Text>
+                </Pressable>
+                <Pressable style={[styles.cta, styles.ctaAlt]} onPress={upload}>
+                  <Text style={[styles.ctaTxt, { color: '#fff' }]}>Upload a photo</Text>
+                </Pressable>
+                <Pressable style={styles.ghost} onPress={() => start(STOCK_PORTRAIT)}>
+                  <Text style={styles.ghostTxt}>Use a sample photo</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {stage === 'generating' && (
             <View style={styles.center}>
               <ActivityIndicator color="#F5620E" size="large" />
               <Text style={styles.h}>Creating your image…</Text>
               <Text style={styles.sub}>Applying the style and rendering details</Text>
             </View>
-          ) : (
+          )}
+
+          {(stage === 'preview' || stage === 'purchasing' || stage === 'unlocked') && (
             <View style={styles.center}>
-              {image != null && (
+              {photo != null && (
                 <View style={styles.imgWrap}>
                   <Image
-                    source={image}
+                    source={photo}
                     style={StyleSheet.absoluteFill}
                     contentFit="cover"
                     blurRadius={locked ? PREVIEW_BLUR : 0}
@@ -96,7 +144,7 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
               <Pressable style={styles.cta} onPress={onClose}>
                 <Text style={styles.ctaTxt}>Done</Text>
               </Pressable>
-            ) : stage !== 'generating' ? (
+            ) : stage === 'preview' || stage === 'purchasing' ? (
               <>
                 <Pressable style={styles.cta} onPress={buy} disabled={stage === 'purchasing'}>
                   <Text style={styles.ctaTxt}>
@@ -111,7 +159,6 @@ export function CreateResultModal({ image, onClose }: { image: Src | null; onClo
           </View>
         </View>
 
-        {/* rendered last so it always sits on top and stays tappable */}
         <Pressable
           onPress={onClose}
           hitSlop={16}
@@ -141,6 +188,8 @@ const styles = StyleSheet.create({
   },
   x: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.md },
+  emoji: { fontSize: 40 },
+  pickBtns: { alignSelf: 'stretch', gap: Spacing.sm, marginTop: Spacing.lg },
   imgWrap: {
     width: 300,
     height: 380,
@@ -178,6 +227,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  ctaAlt: { backgroundColor: 'rgba(255,255,255,0.14)' },
   ctaTxt: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
+  ghost: { height: 44, alignItems: 'center', justifyContent: 'center' },
+  ghostTxt: { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: '600' },
   legal: { color: 'rgba(255,255,255,0.5)', fontSize: 12, textAlign: 'center' },
 });
