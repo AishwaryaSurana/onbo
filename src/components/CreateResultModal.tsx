@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   footer: { gap: Spacing.xs },
   cta: {
     height: 56,
-    borderRadius: 5,
+    borderRadius: Radii.pill,
     backgroundColor: '#F5620E',
     alignItems: 'center',
     justifyContent: 'center',

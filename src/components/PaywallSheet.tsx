@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: D.border,
   },
-  cta: { height: 56, borderRadius: 5, backgroundColor: D.accent, alignItems: 'center', justifyContent: 'center' },
+  cta: { height: 56, borderRadius: Radii.pill, backgroundColor: D.accent, alignItems: 'center', justifyContent: 'center' },
   ctaTxt: { color: '#FFFFFF', fontSize: 18, fontWeight: '800' },
   legalRow: { flexDirection: 'row', justifyContent: 'center' },
   legal: { color: D.dim, fontSize: 12, fontWeight: '600' },

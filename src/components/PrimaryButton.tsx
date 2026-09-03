@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
-import { Spacing, Type, UI } from '@/theme';
+import { Radii, Spacing, Type, UI } from '@/theme';
 
 interface Props {
   label: string;
@@ -52,7 +52,7 @@ export function PrimaryButton({
 const styles = StyleSheet.create({
   base: {
     height: 54,
-    borderRadius: 5,
+    borderRadius: Radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
