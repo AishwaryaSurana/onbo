@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ProgressBar } from '@/components/ProgressBar';
-import { SkipButton } from '@/components/SkipButton';
-import { ThemedText } from '@/components/ThemedText';
+import { ProgressBar } from '@/ui/atoms/ProgressBar';
+import { SkipButton } from '@/ui/molecules/SkipButton';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { UI, Spacing } from '@/theme';
 

@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
-import { PrimaryButton } from '@/components/PrimaryButton';
+import { BeforeAfterSlider } from '@/ui/organisms';
+import { PrimaryButton } from '@/ui/atoms';
 import { WELCOME_PAIRS } from '@/onboarding/manifest';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Spacing } from '@/theme';

@@ -10,8 +10,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { ThemedText } from '@/components/ThemedText';
+import { SkeletonImage } from '@/ui/molecules/SkeletonImage';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { UI, Radii, Spacing, Type } from '@/theme';
 
 type Source = number | { uri: string } | null | undefined;

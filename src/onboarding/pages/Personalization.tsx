@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { ThemedText } from '@/components/ThemedText';
+import { PrimaryButton, ThemedText } from '@/ui/atoms';
 import { useSequencer } from '@/onboarding/SequencerContext';
-import { StepScaffold } from '@/onboarding/StepScaffold';
+import { StepScaffold } from '@/ui/templates';
 import { Events, track } from '@/services/analytics/analytics';
 import { useOnboardingStore, type Goal } from '@/store/onboardingStore';
 import { Radii, Spacing, Type, UI } from '@/theme';

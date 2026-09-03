@@ -12,11 +12,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { PaywallModal } from '@/components/PaywallModal';
-import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { StreakModal } from '@/components/StreakModal';
-import { ThemedText } from '@/components/ThemedText';
+import { PaywallModal, BeforeAfterSlider, StreakModal } from '@/ui/organisms';
+import { SkeletonImage } from '@/ui/molecules';
+import { ThemedText } from '@/ui/atoms';
 import { DASHBOARD_TILES, PROMO_CARDS } from '@/onboarding/manifest';
 import { Events, track } from '@/services/analytics/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';

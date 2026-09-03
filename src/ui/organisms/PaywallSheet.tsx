@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { RankedBadge } from '@/components/RankedBadge';
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { StyleCardCarousel } from '@/components/StyleCardCarousel';
+import { RankedBadge } from '@/ui/molecules/RankedBadge';
+import { SkeletonImage } from '@/ui/molecules/SkeletonImage';
+import { StyleCardCarousel } from '@/ui/organisms/StyleCardCarousel';
 import { PAYWALL_AVATARS, PAYWALL_CARDS, PAYWALL_REVIEWS } from '@/onboarding/manifest';
 import { billing } from '@/services/billing/billing';
 import { Radii, Spacing } from '@/theme';

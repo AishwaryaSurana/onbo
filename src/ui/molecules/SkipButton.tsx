@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { Spacing, Type } from '@/theme';
 
 /** Small, top-right, never forces the tap (PLAN.md 3.2). */

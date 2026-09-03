@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal } from 'react-native';
 
-import { PaywallSheet } from '@/components/PaywallSheet';
+import { PaywallSheet } from '@/ui/organisms/PaywallSheet';
 import { Events, track } from '@/services/analytics/analytics';
 import { billing } from '@/services/billing/billing';
 import { useSessionStore } from '@/store/sessionStore';

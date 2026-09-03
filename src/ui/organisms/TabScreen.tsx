@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { CreateResultModal } from '@/components/CreateResultModal';
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { ThemedText } from '@/components/ThemedText';
+import { CreateResultModal } from '@/ui/organisms/CreateResultModal';
+import { Countdown } from '@/ui/molecules/Countdown';
+import { SkeletonImage } from '@/ui/molecules/SkeletonImage';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { Radii, Spacing, Type, UI } from '@/theme';
 
 type Src = number | { uri: string };
@@ -111,33 +112,6 @@ function Section({ section, onPick }: { section: TabSection; onPick: (img: Src) 
   );
 }
 
-function Countdown() {
-  const [secs, setSecs] = useState(23 * 3600 + 59 * 60 + 50);
-  const ref = useRef(secs);
-  useEffect(() => {
-    const id = setInterval(() => {
-      ref.current = ref.current > 0 ? ref.current - 1 : 24 * 3600;
-      setSecs(ref.current);
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
-  const h = Math.floor(secs / 3600);
-  const m = Math.floor((secs % 3600) / 60);
-  const s = secs % 60;
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  return (
-    <View style={styles.timer}>
-      {[pad(h), pad(m), pad(s)].map((v, i) => (
-        <View key={i} style={styles.timerRow}>
-          {i > 0 && <Text style={styles.timerColon}>:</Text>}
-          <View style={styles.timerBox}>
-            <Text style={styles.timerTxt}>{v}</Text>
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: UI.bg },
@@ -180,18 +154,11 @@ const styles = StyleSheet.create({
   tiles: { gap: Spacing.sm, paddingVertical: 2 },
   tile: { width: 150, height: 190 },
 
-  timer: { flexDirection: 'row', alignItems: 'center', marginLeft: 'auto' },
-  timerRow: { flexDirection: 'row', alignItems: 'center' },
-  timerColon: { color: UI.accent, fontSize: 20, fontWeight: '900', marginHorizontal: 3 },
-  timerBox: {
-    backgroundColor: UI.accent,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    minWidth: 34,
-    alignItems: 'center',
-  },
-  timerTxt: { color: '#FFFFFF', fontSize: 16, fontWeight: '900' },
+
+
+
+
+
 
   toast: {
     position: 'absolute',

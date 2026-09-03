@@ -1,7 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-import { PaywallModal } from '@/components/PaywallModal';
+import { PaywallModal } from '@/ui/organisms/PaywallModal';
 import { Events, track } from '@/services/analytics/analytics';
 import { useSessionStore } from '@/store/sessionStore';
 

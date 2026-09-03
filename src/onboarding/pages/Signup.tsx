@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { PrimaryButton } from '@/components/PrimaryButton';
+import { PrimaryButton } from '@/ui/atoms';
 import { SIGNIN_BG } from '@/onboarding/manifest';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Events, track } from '@/services/analytics/analytics';

@@ -1,5 +1,4 @@
-import { TabPaywallGate } from '@/components/TabPaywallGate';
-import { TabScreen } from '@/components/TabScreen';
+import { TabPaywallGate, TabScreen } from '@/ui/organisms';
 import { AI_EDITOR_CHIPS, AI_EDITOR_SECTIONS } from '@/onboarding/manifest';
 
 export default function AIEditor() {

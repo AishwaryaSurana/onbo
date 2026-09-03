@@ -5,9 +5,8 @@ import { useRef, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { ThemedText } from '@/components/ThemedText';
+import { PrimaryButton, ThemedText } from '@/ui/atoms';
+import { SkeletonImage } from '@/ui/molecules';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Events, track } from '@/services/analytics/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';

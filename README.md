@@ -71,22 +71,25 @@ Invariant enforced + unit-tested: the **paywall never precedes the result or sig
 
 ```
 src/
-  app/                      expo-router routes
+  app/                      expo-router routes (default exports required here)
     _layout.tsx             providers, splash gate, light nav theme
     index.tsx               redirect: subscribed → dashboard, else → onboarding
     onboarding.tsx          hosts <OnboardingSequencer/>
     (app)/                  tab navigator: dashboard, photos, editor, generations
+  ui/                       component library — atomic design (see src/ui/README.md)
+    atoms/                  ThemedText, PrimaryButton, Skeleton, ProgressBar, Sparkle
+    molecules/              SkeletonImage, SkipButton, ConsentCheckbox, RankedBadge, Countdown
+    organisms/              BeforeAfterSlider, StyleCardCarousel, PaywallSheet/Modal,
+                            TabPaywallGate, TabScreen, StreakModal, CreateResultModal
+    templates/              StepScaffold (onboarding chrome)
   onboarding/
     stepOrder.ts            pure step list + audit invariant (unit-tested)
-    steps.config.ts         step id → screen component
+    steps.config.ts         step id → page component
     OnboardingSequencer.tsx renders current step, next/back/skip, analytics on enter
-    StepScaffold.tsx        shared chrome (back / progress / skip / footer CTA)
+    SequencerContext.tsx    step navigation API for pages
     manifest.ts             all bundled image references (swap require()s for real assets)
-    screens/                Welcome, Personalization, PhotoCapture, Generating,
+    pages/                  Welcome, Personalization, PhotoCapture, Generating,
                             ResultReveal, Signup, Paywall
-  components/               BeforeAfterSlider, SkeletonImage, PaywallSheet/Modal,
-                            StreakModal, StyleCardCarousel, TabScreen, TabPaywallGate,
-                            CreateResultModal, RankedBadge, PrimaryButton, …
   services/
     aiGeneration.ts         interface + staged mock (forceGenerationFailure flag)
     auth/                   AuthService interface + mockAuth (Supabase-shaped)
@@ -96,7 +99,10 @@ src/
     onboardingStore.ts      goal, photo, chosen style, result (zustand + AsyncStorage, v2 migrate)
     sessionStore.ts         authed, displayName, entitlement, gamification-seen
   config/flags.ts           paywallPlacement / paywallStyle / quizEnabled / forceGenerationFailure
-  theme/index.ts            single light UI palette + spacing / radii / type scale
+  theme/
+    tokens.ts               light UI palette + spacing / radii / type scale
+    navigation.ts           React Navigation theme
+    index.ts                barrel
 assets/onboarding/          p01–p16 (placeholder portraits) + hero1–5 (Welcome slider)
 ```
 

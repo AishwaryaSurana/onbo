@@ -2,8 +2,8 @@ import { Image, type ImageContentFit } from 'expo-image';
 import { useState } from 'react';
 import { ActivityIndicator, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { Skeleton } from '@/components/Skeleton';
-import { ThemedText } from '@/components/ThemedText';
+import { Skeleton } from '@/ui/atoms/Skeleton';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { UI, Radii, Spacing, Type } from '@/theme';
 
 type Source = number | { uri: string } | null | undefined;

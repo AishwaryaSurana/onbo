@@ -3,13 +3,13 @@ import type { ComponentType } from 'react';
 import { flags } from '@/config/flags';
 import { buildStepOrder, type StepId, type StepMeta } from '@/onboarding/stepOrder';
 
-import { Generating } from './screens/Generating';
-import { Paywall } from './screens/Paywall';
-import { Personalization } from './screens/Personalization';
-import { PhotoCapture } from './screens/PhotoCapture';
-import { ResultReveal } from './screens/ResultReveal';
-import { Signup } from './screens/Signup';
-import { Welcome } from './screens/Welcome';
+import { Generating } from './pages/Generating';
+import { Paywall } from './pages/Paywall';
+import { Personalization } from './pages/Personalization';
+import { PhotoCapture } from './pages/PhotoCapture';
+import { ResultReveal } from './pages/ResultReveal';
+import { Signup } from './pages/Signup';
+import { Welcome } from './pages/Welcome';
 
 export type StepDef = StepMeta & { component: ComponentType };
 

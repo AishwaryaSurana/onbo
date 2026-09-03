@@ -1,9 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { ThemedText } from '@/components/ThemedText';
+import { BeforeAfterSlider } from '@/ui/organisms';
+import { PrimaryButton, ThemedText } from '@/ui/atoms';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { photoImageSource, resultImageSource, STYLE_SETS } from '@/onboarding/manifest';
 import { useOnboardingStore } from '@/store/onboardingStore';

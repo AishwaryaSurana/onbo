@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { PaywallSheet } from '@/components/PaywallSheet';
+import { PaywallSheet } from '@/ui/organisms';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { Events, track } from '@/services/analytics/analytics';
 import { billing } from '@/services/billing/billing';

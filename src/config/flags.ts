@@ -21,7 +21,7 @@ export const flags: Flags = {
   paywallPlacement: 'post_signup',
   paywallStyle: 'soft',
   // "What do you want to create?" personalization screen — removed from the flow.
-  // Flip to true to bring it back (screen still lives in src/onboarding/screens/Personalization.tsx).
+  // Flip to true to bring it back (screen still lives in src/onboarding/pages/Personalization.tsx).
   quizEnabled: false,
   forceGenerationFailure: false,
 };

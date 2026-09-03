@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from '@/ui/atoms';
 import { Spacing, Type, UI } from '@/theme';
 
 export default function Stub() {

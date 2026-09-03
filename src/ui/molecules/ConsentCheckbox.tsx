@@ -1,6 +1,6 @@
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from '@/ui/atoms/ThemedText';
 import { UI, Radii, Spacing, Type } from '@/theme';
 
 const TERMS_URL = 'https://example.com/terms';

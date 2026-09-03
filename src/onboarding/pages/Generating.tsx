@@ -9,9 +9,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { SkeletonImage } from '@/components/SkeletonImage';
-import { ThemedText } from '@/components/ThemedText';
+import { PrimaryButton, ThemedText } from '@/ui/atoms';
+import { SkeletonImage } from '@/ui/molecules';
 import { useSequencer } from '@/onboarding/SequencerContext';
 import { photoImageSource } from '@/onboarding/manifest';
 import { STAGE_COPY, aiGeneration, type GenStage } from '@/services/aiGeneration';

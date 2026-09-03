@@ -10,7 +10,7 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 
-import { SkeletonImage } from '@/components/SkeletonImage';
+import { SkeletonImage } from '@/ui/molecules/SkeletonImage';
 import { Radii } from '@/theme';
 
 type Src = number | { uri: string };
