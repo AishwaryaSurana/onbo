@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PaywallModal } from '@/components/PaywallModal';
+import { BeforeAfterSlider } from '@/components/BeforeAfterSlider';
 import { SkeletonImage } from '@/components/SkeletonImage';
 import { StreakModal } from '@/components/StreakModal';
 import { ThemedText } from '@/components/ThemedText';
@@ -34,6 +35,8 @@ export default function Dashboard() {
   const initial = (firstName ?? 'A').charAt(0).toUpperCase();
   const credits = entitlement === 'none' ? '0' : '1,200';
   const [payOpen, setPayOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const { height: viewportH } = useWindowDimensions();
 
   useEffect(() => {
     track(Events.dashboardReached, { entitlement, goal: goal ?? 'unset' });
@@ -41,7 +44,11 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={32}
+        onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}>
         {/* Top bar */}
         <View style={styles.topbar}>
           <View style={styles.logo}>
@@ -67,8 +74,15 @@ export default function Dashboard() {
 
         <PromoCarousel />
 
-        {CATEGORIES.map((cat) => (
-          <CategoryRow key={cat} title={cat} tiles={DASHBOARD_TILES[cat]} />
+        {CATEGORIES.map((cat, i) => (
+          <CategoryRow
+            key={cat}
+            title={cat}
+            tiles={DASHBOARD_TILES[cat]}
+            slider={(i + 1) % 3 === 0}
+            scrollY={scrollY}
+            viewportH={viewportH}
+          />
         ))}
       </ScrollView>
 
@@ -122,14 +136,47 @@ function PromoCarousel() {
   );
 }
 
-function CategoryRow({ title, tiles }: { title: string; tiles: (number | { uri: string })[] }) {
+function CategoryRow({
+  title,
+  tiles,
+  slider = false,
+  scrollY = 0,
+  viewportH = 0,
+}: {
+  title: string;
+  tiles: (number | { uri: string })[];
+  slider?: boolean;
+  scrollY?: number;
+  viewportH?: number;
+}) {
+  const [box, setBox] = useState({ y: 0, h: 0 });
+  // run the before/after sweep only while the row is on screen
+  const active =
+    slider && box.h > 0 && box.y < scrollY + viewportH - 40 && box.y + box.h > scrollY + 40;
+
   return (
-    <View style={styles.row}>
+    <View
+      style={styles.row}
+      onLayout={(e) => setBox({ y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height })}>
       <ThemedText style={styles.rowTitle}>{title}</ThemedText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
-        {tiles.map((t, i) => (
-          <SkeletonImage key={i} source={t} style={styles.tile} radius={Radii.md} fallbackLabel="" />
-        ))}
+        {tiles.map((t, i) =>
+          slider ? (
+            <View key={i} style={{ width: 138 }}>
+              <BeforeAfterSlider
+                before={t}
+                after={tiles[(i + 1) % tiles.length]}
+                height={174}
+                radius={Radii.md}
+                sweep={[0.3, 0.7]}
+                minimal
+                autoPlay={active}
+              />
+            </View>
+          ) : (
+            <SkeletonImage key={i} source={t} style={styles.tile} radius={Radii.md} fallbackLabel="" />
+          ),
+        )}
       </ScrollView>
     </View>
   );

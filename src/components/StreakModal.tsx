@@ -56,8 +56,9 @@ export function StreakModal({ onClose, onClaim }: { onClose: () => void; onClaim
         </View>
 
         <View style={styles.coinWrap}>
-          <Sparkle style={{ position: 'absolute', top: -2, left: 78 }} size={24} />
-          <Sparkle style={{ position: 'absolute', bottom: 2, left: 86 }} size={18} delay={320} />
+          <Sparkle style={{ position: 'absolute', top: 10, left: 22 }} size={22} />
+          <Sparkle style={{ position: 'absolute', top: 30, left: 6 }} size={13} delay={200} />
+          <Sparkle style={{ position: 'absolute', bottom: 20, right: 16 }} size={17} delay={380} />
           <View style={styles.coin}>
             <Text style={styles.coinS}>$</Text>
           </View>
