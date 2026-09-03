@@ -84,7 +84,7 @@ export function resultImageSource(goal: Goal, styleId: string | null): ImgSource
 
 /** Welcome (splash) hero before/after slider. */
 export const WELCOME_BEFORE = require('@/assets/onboarding/hero1.jpg');
-export const WELCOME_AFTER = require('@/assets/onboarding/hero2.jpg');
+export const WELCOME_AFTER = require('@/assets/onboarding/hero3.jpg');
 
 /** Full-bleed background for the Sign-in screen. */
 export const SIGNIN_BG = P[13];
