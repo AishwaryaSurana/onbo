@@ -1,11 +1,37 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { Modal, Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native';
+import Animated, {
+  Easing,
+  FadeIn,
+  SlideInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { Radii, Spacing } from '@/theme';
 
 const DAYS = [16, 16, 16, 16, 16, 24, 32];
+
+/** Twinkling ✦ sparkle. */
+function Sparkle({ style, size = 20, delay = 0 }: { style?: TextStyle; size?: number; delay?: number }) {
+  const v = useSharedValue(0.15);
+  useEffect(() => {
+    v.value = withDelay(
+      delay,
+      withRepeat(withTiming(1, { duration: 650, easing: Easing.inOut(Easing.ease) }), -1, true),
+    );
+  }, [v, delay]);
+  const anim = useAnimatedStyle(() => ({
+    opacity: v.value,
+    transform: [{ scale: 0.65 + v.value * 0.55 }],
+  }));
+  return <Animated.Text style={[styles.spark, { fontSize: size }, style, anim]}>✦</Animated.Text>;
+}
 
 /** Aragon-style daily reward sheet. Rendered in a top-level Modal so it sits ABOVE the
  *  bottom tab bar and status bar. */
@@ -30,8 +56,8 @@ export function StreakModal({ onClose, onClaim }: { onClose: () => void; onClaim
         </View>
 
         <View style={styles.coinWrap}>
-          <Text style={[styles.spark, { top: 6, left: 40 }]}>✦</Text>
-          <Text style={[styles.spark, { bottom: 12, right: 44, fontSize: 14 }]}>✦</Text>
+          <Sparkle style={{ position: 'absolute', top: -2, left: 78 }} size={24} />
+          <Sparkle style={{ position: 'absolute', bottom: 2, left: 86 }} size={18} delay={320} />
           <View style={styles.coin}>
             <Text style={styles.coinS}>$</Text>
           </View>
@@ -106,20 +132,20 @@ const styles = StyleSheet.create({
   coinS: { color: '#B47C12', fontSize: 68, fontWeight: '900' },
   badge: {
     position: 'absolute',
-    top: 14,
-    right: 18,
-    minWidth: 36,
-    height: 36,
-    borderRadius: 18,
+    top: 8,
+    right: 10,
+    minWidth: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: '#E5342B',
-    borderWidth: 3,
+    borderWidth: 4,
     borderColor: '#8E1C16',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
   },
-  badgeTxt: { color: '#FFFFFF', fontSize: 16, fontWeight: '900' },
-  spark: { position: 'absolute', color: 'rgba(255,255,255,0.9)', fontSize: 18 },
+  badgeTxt: { color: '#FFFFFF', fontSize: 22, fontWeight: '900' },
+  spark: { color: 'rgba(255,255,255,0.95)' },
   credits: { color: '#FFFFFF', fontSize: 28, fontWeight: '900', marginTop: Spacing.xs },
   subtitle: { color: 'rgba(255,255,255,0.75)', fontSize: 14 },
   daysRow: {
